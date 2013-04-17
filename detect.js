@@ -4,7 +4,11 @@
  * @since  1.0.0
  * @type {Object}
  */
-Detect: {
+var Detect = function(){
+	return this.do();
+}
+
+Detect.prototype = {
 	/**
 	 * [_Navigator Copy of the window.navigator object so we can add/remove things if necessary]
 	 * @since  1.0.0
@@ -25,8 +29,8 @@ Detect: {
 		CHROME_WEBKIT: {name: 'chrome', engine: 'webkit', version: '0.0.0'},
 		CHROME_BLINK: {name: 'chrome', engine: 'blink', version: '0.0.0'},
 		FIREFOX: {name: 'firefox', engine: 'gecko', version: '0.0.0'},
-		OPERA_PRESTO: {name: 'opera', engine: 'presto', version: '0.0.0'},
-		OPERA_BLINK: {name: 'opera', engine: 'blink', version: '0.0.0'},
+		OPERA_PRESTO: {name: 'opera', engine: 'presto', version: '0.0.0'}, //currently not tested for
+		OPERA_BLINK: {name: 'opera', engine: 'blink', version: '0.0.0'}, //currently not tested for
 		SAFARI: {name: 'safari', engine: 'webkit', version: '0.0.0'},
 		IE: {name: 'ie', engine: 'trident', version: '0.0.0'},
 	},
@@ -35,7 +39,19 @@ Detect: {
 	 * [_OS User's operating system]
 	 * @type {String}
 	 */
-	_OS: 'Unknown', //currently unused
+	_OS: 'Unknown',
+
+	/**
+	 * [do Sets the _Browser and _OS variables]
+	 * @return {object} [Aggregated data from both this.browser and this.os]
+	 */
+	do: function(){
+		return {
+			os: this.os(),
+			browser: this.browser(),
+			plugins: this.plugins(),
+		}
+	},
 
 	/**
 	 * [browser Determine the user's browser]
@@ -113,6 +129,9 @@ Detect: {
 	os: function(options){
 		var parts = this._Navigator.userAgent.split(/\s*[;)(]\s*/);
 
+		//TODO: process the raw data into a more friendly version
+		//I.E.: win32 = windows, macintel = mac, linux x86_64 = linux, etc
+
 		return this._Navigator.platform.toLowerCase().split(' ')[0] || parts[3].toLowerCase();
 	},
 
@@ -121,6 +140,8 @@ Detect: {
 	 * @param {object} options [Any required settings]
 	 * @since  1.0.0
 	 * @return {object}
+	 * 
+	 * TODO: add functionality to this function
 	 */
 	plugins: function(options){
 		var output = {};
@@ -132,3 +153,4 @@ Detect: {
 		return output;
 	},
 };
+
