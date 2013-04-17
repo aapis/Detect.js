@@ -32,6 +32,12 @@ Detect: {
 	},
 
 	/**
+	 * [_OS User's operating system]
+	 * @type {String}
+	 */
+	_OS: 'Unknown', //currently unused
+
+	/**
 	 * [browser Determine the user's browser]
 	 * @param {object} options [Any required settings]
 	 * @since  1.0.0
@@ -41,9 +47,24 @@ Detect: {
 		var parts = this._Navigator.userAgent.split(/\s*[;)(]\s*/),
 			output = this._Browsers.UNKNOWN;
 
+		//safari/webkit
+		if(/^Version/.test(parts[5]) && /Safari/.test(parts[5])){
+			if(this.os() == 'macintel'){
+				this._Browsers.SAFARI.version = parts[5].split(' ')[0].substring(8);
+			}else {
+				this._Browsers.SAFARI.version = parts[5].split(' ')[0].substring(7);
+			}
+
+			output = this._Browsers.SAFARI;
+		}
+
 		//chrome/webkit
 		if(/^Chrome/.test(parts[5]) && /^AppleWebKit/.test(parts[3])){
-			this._Browsers.CHROME_WEBKIT.version = parts[5].substring(7, 19);
+			if(this.os() == 'macintel'){
+				this._Browsers.CHROME_WEBKIT.version = parts[5].split(' ')[0].substring(8);
+			}else {
+				this._Browsers.CHROME_WEBKIT.version = parts[5].split(' ')[0].substring(7);
+			}
 
 			output = this._Browsers.CHROME_WEBKIT;
 		}
