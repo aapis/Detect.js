@@ -194,12 +194,21 @@ Detect.prototype = {
 				for(var i = 0; i < navigator.plugins.length; i++){
 					var plugin = navigator.plugins[i];
 
-					output.content.push({name: plugin.name, description: plugin.description});
+					output.content.push({name: plugin.name, description: plugin.description, slug: this._slug(plugin.name)});
 				}
 			}
 		}
 		
 		return output;
 	},
+
+	/**
+	 * [_slug Generate a slug that is easier to remember than the real plugin name]
+	 * @param  {string} plugin [Plugin name to process]
+	 * @return {string}
+	 */
+	_slug: function(plugin){
+		return plugin.split(' ').join('_').toLowerCase();
+	}
 };
 
