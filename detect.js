@@ -4,8 +4,8 @@
  * @since  1.0.0
  * @type {Object}
  */
-var Detect = function(){
-	return this.do();
+var Detect = function(options){
+	return this.do(options);
 }
 
 Detect.prototype = {
@@ -43,13 +43,14 @@ Detect.prototype = {
 
 	/**
 	 * [do Sets the _Browser and _OS variables]
+	 * @param {object} options [Setup options: format]
 	 * @return {object} [Aggregated data from both this.browser and this.os]
 	 */
-	do: function(){
+	do: function(options){
 		return {
 			os: this.os(),
 			browser: this.browser(),
-			plugins: this.plugins(),
+			plugins: this.plugins(options),
 		}
 	},
 
@@ -147,9 +148,29 @@ Detect.prototype = {
 		var output = {};
 
 		if(navigator.plugins || navigator.plugins.length > 1){
+			output.content = [];
 
+			if(options.format){
+				//HTML
+				for(var i = 0; i < navigator.plugins.length; i++){
+					var plugin = navigator.plugins[i];
+
+					if(plugin.name)
+						output.content.push('<li>Name: <strong>'+ plugin.name +'</strong></li>');
+					if(plugin.description)
+						output.content.push('<li>Description: <strong>'+ plugin.description +'</strong></li>');
+				}
+				output = output.content.join(' ');
+			}else {
+				//object
+				for(var i = 0; i < navigator.plugins.length; i++){
+					var plugin = navigator.plugins[i];
+
+					output.content.push({name: plugin.name, description: plugin.description});
+				}
+			}
 		}
-
+		
 		return output;
 	},
 };

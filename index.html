@@ -11,7 +11,7 @@
 				color: #eee;
 			}
 
-			span {
+			span, strong {
 				color: lime;
 			}
 
@@ -23,13 +23,14 @@
 		<script type="text/javascript" src="detect.js"></script>
 		<script type="text/javascript">
 			window.onload = function(){
-				var info = new Detect;
+				var info = new Detect({format: false});
 
 				//to view the full object, open your console
 				console.log(info);
 
 				document.querySelector('.browser').innerHTML = '<strong>'+ info.browser.name +' '+ info.browser.engine +' '+ info.browser.version + '</strong>';
 				document.querySelector('.os').innerHTML = '<strong>'+ info.os +'</strong>';
+				document.querySelector('.plugins').innerHTML = info.plugins;
 			}
 		</script>
 	</head>
@@ -39,7 +40,11 @@
 			<h2>I am spying on you:</h2>
 			<p>Your browser is: <span class="browser">Unknown</span></p>
 			<p>Your OS is: <span class="os">Unknown</span></p>
-			<p>Installed plugins:</p>
+			<p>Installed plugins: 
+				<ul class="plugins">
+
+				</ul>
+			</p>
 			<p>Check your console for the full object.</p>
 		</div>
 	</body>
