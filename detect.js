@@ -69,14 +69,18 @@ Detect.prototype = {
 	 */
 	browser: function(options){
 		var parts = this._Navigator.userAgent.split(/\s*[;)(]\s*/),
-			output = this._Browsers.UNKNOWN;
+			output = this._Browsers.UNKNOWN,
+			os = this.os();
 
 		//safari/webkit
 		if(/^Version/.test(parts[5]) && /Safari/.test(parts[5])){
-			if(this.os() == 'macintel'){
-				this._Browsers.SAFARI.version = parts[5].split(' ')[0].substring(8);
-			}else {
-				this._Browsers.SAFARI.version = parts[5].split(' ')[0].substring(7);
+			switch(os){
+				case this._OS.MAC:
+					this._Browsers.SAFARI.version = parts[5].split(' ')[0].substring(8); break;
+
+				default:
+					this._Browsers.SAFARI.version = parts[5].split(' ')[0].substring(7);
+
 			}
 
 			output = this._Browsers.SAFARI;
@@ -84,10 +88,12 @@ Detect.prototype = {
 
 		//chrome/webkit
 		if(/^Chrome/.test(parts[5]) && /^AppleWebKit/.test(parts[3])){
-			if(this.os() == 'macintel'){
-				this._Browsers.CHROME_WEBKIT.version = parts[5].split(' ')[0].substring(8);
-			}else {
-				this._Browsers.CHROME_WEBKIT.version = parts[5].split(' ')[0].substring(7);
+			switch(os){
+				case this._OS.MAC:
+					this._Browsers.CHROME_WEBKIT.version = parts[5].split(' ')[0].substring(8); break;
+
+				default:
+					this._Browsers.CHROME_WEBKIT.version = parts[5].split(' ')[0].substring(7);
 			}
 
 			output = this._Browsers.CHROME_WEBKIT;
@@ -108,10 +114,12 @@ Detect.prototype = {
 
 		//firefox/gecko
 		if(/^(Gecko|Firefox)/.test(parts[4]) || /^(Gecko|Firefox)/.test(parts[5])){ //Linux UA has 6, Windows has 5
-			if(this.os() == 'linux'){ //LINUX
-				this._Browsers.FIREFOX.version = parts[5].split(' ')[1].substring(8);
-			}else if(this.os() == 'win32'){ //WINDOWS
-				this._Browsers.FIREFOX.version = parts[4].split(' ')[1].substring(8);
+			switch(os){
+				case this._OS.LINUX:
+					this._Browsers.FIREFOX.version = parts[5].split(' ')[1].substring(8); break;
+
+				case this._OS.WINDOWS:
+					this._Browsers.FIREFOX.version = parts[4].split(' ')[1].substring(8); break;
 			}
 			
 			output = this._Browsers.FIREFOX;
