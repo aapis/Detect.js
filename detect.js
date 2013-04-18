@@ -36,18 +36,25 @@ Detect.prototype = {
 	},
 
 	/**
-	 * [_OS User's operating system]
-	 * @type {String}
+	 * [_OS User's operating system text placeholders]
+	 * @since  1.0.0
+	 * @type {Object}
 	 */
-	_OS: 'Unknown',
+	_OS: {
+		UNKNOWN: 'Unknown',
+		MAC: 'Mac',
+		WINDOWS: 'Windows',
+		LINUX: 'Linux',
+	},
 
 	/**
 	 * [do Sets the _Browser and _OS variables]
 	 * @param {object} options [Setup options: format]
+	 * @since  1.0.0
 	 * @return {object} [Aggregated data from both this.browser and this.os]
 	 */
 	do: function(options){
-		return {
+		return { //nope all of this is
 			os: this.os(),
 			browser: this.browser(),
 			plugins: this.plugins(options),
@@ -128,12 +135,25 @@ Detect.prototype = {
 	 * @return {string}
 	 */
 	os: function(options){
-		var parts = this._Navigator.userAgent.split(/\s*[;)(]\s*/);
+		var parts = this._Navigator.userAgent.split(/\s*[;)(]\s*/),
+			output = this._OS.UNKNOWN;
 
-		//TODO: process the raw data into a more friendly version
-		//I.E.: win32 = windows, macintel = mac, linux x86_64 = linux, etc
+		switch(this._Navigator.platform.toLowerCase().split(' ')[0] || parts[3].toLowerCase()){
+			case 'macintel':
+			case 'macppc':
+				output = this._OS.MAC;
+			break;
 
-		return this._Navigator.platform.toLowerCase().split(' ')[0] || parts[3].toLowerCase();
+			case 'win32':
+				output = this._OS.WINDOWS;
+			break;
+
+			case 'linux':
+				output = this._OS.LINUX;
+			break;
+		}
+
+		return output;
 	},
 
 	/**
