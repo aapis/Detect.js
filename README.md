@@ -17,7 +17,9 @@ output:
 		version: 'browserVersion',
 	},
 	os: 'OS',
-	plugins: [INSTALLED_PLUGIN_ARRAY]
+	plugins: {
+		content: [INSTALLED_PLUGIN_ARRAY]
+	}
 }
 ```
 
