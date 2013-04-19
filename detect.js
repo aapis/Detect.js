@@ -41,10 +41,10 @@ Detect.prototype = {
 	 * @type {Object}
 	 */
 	_OS: {
-		UNKNOWN: 'Unknown',
-		MAC: 'Mac',
-		WINDOWS: 'Windows',
-		LINUX: 'Linux',
+		UNKNOWN: {name: 'Unknown', bits: 'x86'},
+		MAC: {name: 'Mac', bits: 'x86'},
+		WINDOWS: {name: 'Windows', bits: 'x86'},
+		LINUX: {name: 'Linux', bits: 'x86'},
 	},
 
 	/**
@@ -54,6 +54,10 @@ Detect.prototype = {
 	 * @return {object} [Aggregated data from both this.browser and this.os]
 	 */
 	do: function(options){
+		if(options.addClasses){
+			this._addClasses();
+		}
+
 		return { //nope all of this is
 			os: this.os(),
 			browser: this.browser(),
@@ -70,16 +74,16 @@ Detect.prototype = {
 	browser: function(options){
 		var parts = this._Navigator.userAgent.split(/\s*[;)(]\s*/),
 			output = this._Browsers.UNKNOWN,
-			os = this.os();
+			os = this.os().system;
 
 		//safari/webkit
 		if(/^Version/.test(parts[5]) && /Safari/.test(parts[5])){
 			switch(os){
-				case this._OS.MAC:
+				case this._OS.MAC.system:
 					this._Browsers.SAFARI.version = parts[5].split(' ')[0].substring(8); break;
 
 				default:
-					this._Browsers.SAFARI.version = parts[5].split(' ')[0].substring(7);
+					this._Browsers.SAFARI.version = parts[5].split(' ')[0].substring(8);
 
 			}
 
@@ -89,7 +93,7 @@ Detect.prototype = {
 		//chrome/webkit
 		if(/^Chrome/.test(parts[5]) && /^AppleWebKit/.test(parts[3])){
 			switch(os){
-				case this._OS.MAC:
+				case this._OS.MAC.system:
 					this._Browsers.CHROME_WEBKIT.version = parts[5].split(' ')[0].substring(8); break;
 
 				default:
@@ -115,10 +119,10 @@ Detect.prototype = {
 		//firefox/gecko
 		if(/^(Gecko|Firefox)/.test(parts[4]) || /^(Gecko|Firefox)/.test(parts[5])){ //Linux UA has 6, Windows has 5
 			switch(os){
-				case this._OS.LINUX:
+				case this._OS.LINUX.system:
 					this._Browsers.FIREFOX.version = parts[5].split(' ')[1].substring(8); break;
 
-				case this._OS.WINDOWS:
+				case this._OS.WINDOWS.system:
 					this._Browsers.FIREFOX.version = parts[4].split(' ')[1].substring(8); break;
 			}
 			
@@ -144,24 +148,44 @@ Detect.prototype = {
 	 */
 	os: function(options){
 		var parts = this._Navigator.userAgent.split(/\s*[;)(]\s*/),
-			output = this._OS.UNKNOWN;
+			output = {system: this._OS.UNKNOWN.name, bits: this._OS.UNKNOWN.bits},
+			bits = this.bits();
 
 		switch(this._Navigator.platform.toLowerCase().split(' ')[0] || parts[3].toLowerCase()){
 			case 'macintel':
 			case 'macppc':
-				output = this._OS.MAC;
+				output.system = this._OS.MAC.name;
+				output.bits = (bits ? bits : this._OS.MAC.bits);
 			break;
 
 			case 'win32':
-				output = this._OS.WINDOWS;
+				output.system = this._OS.WINDOWS.name;
+				output.bits = (bits ? bits : this._OS.WINDOWS.bits);
 			break;
 
 			case 'linux':
-				output = this._OS.LINUX;
+				output.system = this._OS.LINUX.name;
+				output.bits = (bits ? bits : this._OS.LINUX.bits);
 			break;
 		}
 
 		return output;
+	},
+
+	/**
+	 * [bits Determine the CPU architecture - x86 or x64]
+	 * Note: some browsers don't broadcast the system architecture 
+	 * so this will make it's best guess
+	 * 
+	 * @since  1.0.0
+	 * @return {mixed} [bool|string]
+	 */
+	bits: function(){
+		var parts = this._Navigator.userAgent.split(/\s*[;)(]\s*/);
+
+		//if osx and version > 10.6, x64
+		//if windows WOW64, x64
+		//else x86
 	},
 
 	/**
@@ -200,6 +224,16 @@ Detect.prototype = {
 		}
 		
 		return output;
+	},
+
+	/**
+	 * [_addClasses Add classes to the body element if options.addBodyClasses is true]
+	 *
+	 * @since  1.0.0
+	 * @return {bool} [description]
+	 */
+	_addClasses: function(){
+		document.body.classList.add('test');
 	},
 
 	/**

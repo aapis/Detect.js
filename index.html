@@ -23,13 +23,16 @@
 		<script type="text/javascript" src="detect.js"></script>
 		<script type="text/javascript">
 			window.onload = function(){
-				var info = new Detect({format: false});
+				var info = new Detect({
+					format: false,
+					addClasses: true,
+				});
 
 				//to view the full object, open your console
 				console.log(info);
 
 				document.querySelector('.browser').innerHTML = '<strong>'+ info.browser.name +' '+ info.browser.engine +' '+ info.browser.version + '</strong>';
-				document.querySelector('.os').innerHTML = '<strong>'+ info.os +'</strong>';
+				document.querySelector('.os').innerHTML = '<strong>'+ info.os.system +'</strong>';
 				document.querySelector('.plugins').innerHTML = info.plugins;
 			}
 		</script>
