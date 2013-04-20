@@ -12,11 +12,16 @@ To view the full object, console.log(info)
 output: 
 {
 	browser: {
-		name: 'browserName', 
+		name: 'browserName',
 		engine: 'browserEngine', 
 		version: 'browserVersion',
 	},
-	os: 'OS',
+	
+	os: {
+		bits: 'systemBits',
+		system: 'systemName',
+	},
+
 	plugins: {
 		content: [INSTALLED_PLUGIN_ARRAY]
 	}

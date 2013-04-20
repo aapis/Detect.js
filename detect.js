@@ -54,15 +54,17 @@ Detect.prototype = {
 	 * @return {object} [Aggregated data from both this.browser and this.os]
 	 */
 	do: function(options){
-		if(options.addClasses){
-			this._addClasses();
-		}
-
-		return { //nope all of this is
+		var output = {
 			os: this.os(),
 			browser: this.browser(),
 			plugins: this.plugins(options),
+		};
+
+		if(options.addClasses){
+			this._addClasses(output);
 		}
+
+		return output;
 	},
 
 	/**
@@ -148,25 +150,22 @@ Detect.prototype = {
 	 */
 	os: function(options){
 		var parts = this._Navigator.userAgent.split(/\s*[;)(]\s*/),
-			output = {system: this._OS.UNKNOWN.name, bits: this._OS.UNKNOWN.bits},
+			output = {system: this._OS.UNKNOWN.name, bits: this._OS.UNKNOWN.bits};
 			bits = this.bits();
 
 		switch(this._Navigator.platform.toLowerCase().split(' ')[0] || parts[3].toLowerCase()){
 			case 'macintel':
 			case 'macppc':
 				output.system = this._OS.MAC.name;
-				output.bits = (bits ? bits : this._OS.MAC.bits);
-			break;
+				output.bits = (bits ? bits : this._OS.MAC.bits); break;
 
 			case 'win32':
 				output.system = this._OS.WINDOWS.name;
-				output.bits = (bits ? bits : this._OS.WINDOWS.bits);
-			break;
+				output.bits = (bits ? bits : this._OS.WINDOWS.bits); break;
 
 			case 'linux':
 				output.system = this._OS.LINUX.name;
-				output.bits = (bits ? bits : this._OS.LINUX.bits);
-			break;
+				output.bits = (bits ? bits : this._OS.LINUX.bits); break;
 		}
 
 		return output;
@@ -182,14 +181,24 @@ Detect.prototype = {
 	 */
 	bits: function(){
 		var parts = this._Navigator.userAgent.split(/\s*[;)(]\s*/),
-
-		//if osx and version > 10.6, x64
-		//if windows WOW64, x64
-		//else x86
+			output = '';
 		
 		switch(this._Navigator.platform.toLowerCase().split(' ')[0] || parts[3].toLowerCase()){
-			//case 
+			case 'macintel':
+				output = 'x64'; break;
+
+			case 'macppc':
+				output = 'x86'; break;
+
+			//not tested yet
+			case 'win32': 
+				output = (parts[2].match(/wow64/i) ? 'x64' : 'x86'); break;
+
+			//not tested yet
+			case 'linux': break;
 		}
+
+		return output;
 	},
 
 	/**
@@ -197,19 +206,17 @@ Detect.prototype = {
 	 * @param {object} options [Any required settings]
 	 * @since  1.0.0
 	 * @return {object}
-	 * 
-	 * TODO: add functionality to this function
 	 */
 	plugins: function(options){
 		var output = {};
 
-		if(navigator.plugins || navigator.plugins.length > 1){
+		if(this._Navigator.plugins || this._Navigator.plugins.length > 1){
 			output.content = [];
 
 			if(options.format){
 				//HTML
-				for(var i = 0; i < navigator.plugins.length; i++){
-					var plugin = navigator.plugins[i];
+				for(var i = 0; i < this._Navigator.plugins.length; i++){
+					var plugin = this._Navigator.plugins[i];
 
 					if(plugin.name)
 						output.content.push('<li>Name: <strong>'+ plugin.name +'</strong></li>');
@@ -219,8 +226,8 @@ Detect.prototype = {
 				output = output.content.join(' ');
 			}else {
 				//object
-				for(var i = 0; i < navigator.plugins.length; i++){
-					var plugin = navigator.plugins[i];
+				for(var i = 0; i < this._Navigator.plugins.length; i++){
+					var plugin = this._Navigator.plugins[i];
 
 					output.content.push({name: plugin.name, description: plugin.description, slug: this._slug(plugin.name)});
 				}
@@ -233,11 +240,20 @@ Detect.prototype = {
 	/**
 	 * [_addClasses Add classes to the body element if options.addBodyClasses is true]
 	 *
+	 * @param {object} options [Values the script detected]
 	 * @since  1.0.0
-	 * @return {bool} [description]
+	 * @return {void}
 	 */
-	_addClasses: function(){
-		document.body.classList.add('test');
+	_addClasses: function(options){
+		var output = '';
+
+		for(var prop in options){
+			if(typeof options[prop] === 'object'){
+				for(var iprop in options[prop]){
+					document.body.classList.add(iprop +'-'+ options[prop][iprop].toLowerCase());
+				}
+			}
+		}
 	},
 
 	/**
@@ -247,6 +263,16 @@ Detect.prototype = {
 	 */
 	_slug: function(plugin){
 		return plugin.split(' ').join('_').toLowerCase();
-	}
+	},
+
+	PluginUtility: {
+		isPluginInstalled: function(plugin_slug){
+			//in_array
+		},
+
+		getPluginVersion: function(plugin_slug){
+			//pass
+		},
+	},
 };
 
