@@ -181,11 +181,15 @@ Detect.prototype = {
 	 * @return {mixed} [bool|string]
 	 */
 	bits: function(){
-		var parts = this._Navigator.userAgent.split(/\s*[;)(]\s*/);
+		var parts = this._Navigator.userAgent.split(/\s*[;)(]\s*/),
 
 		//if osx and version > 10.6, x64
 		//if windows WOW64, x64
 		//else x86
+		
+		switch(this._Navigator.platform.toLowerCase().split(' ')[0] || parts[3].toLowerCase()){
+			//case 
+		}
 	},
 
 	/**
