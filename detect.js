@@ -49,7 +49,7 @@ Detect.prototype = {
 
 	/**
 	 * [do Sets the _Browser and _OS variables]
-	 * @param {object} options [Setup options: format]
+	 * @param {object} options
 	 * @since  1.0.0
 	 * @return {object} [Aggregated data from both this.browser and this.os]
 	 */
@@ -61,7 +61,7 @@ Detect.prototype = {
 		};
 
 		if(options.addClasses){
-			this._addClasses(output);
+			this._addClasses(options, output);
 		}
 
 		return output;
@@ -240,17 +240,23 @@ Detect.prototype = {
 	/**
 	 * [_addClasses Add classes to the body element if options.addBodyClasses is true]
 	 *
-	 * @param {object} options [Values the script detected]
+	 * @param {object} options
+	 * @param {object} ref [The object we use to determine the proper class names]
 	 * @since  1.0.0
 	 * @return {void}
 	 */
-	_addClasses: function(options){
-		var output = '';
+	_addClasses: function(options, ref){
+		var output = '',
+			useDefault = (options.bodyClassPrefix === 'default');
 
-		for(var prop in options){
-			if(typeof options[prop] === 'object'){
-				for(var iprop in options[prop]){
-					document.body.classList.add(iprop +'-'+ options[prop][iprop].toLowerCase());
+		for(var prop in ref){
+			if(typeof ref[prop] === 'object'){
+				for(var iprop in ref[prop]){
+					if(useDefault){
+						document.body.classList.add(iprop +'-'+ ref[prop][iprop].toLowerCase());	
+					}else {
+						document.body.classList.add(options.bodyClassPrefix + iprop +'-'+ ref[prop][iprop].toLowerCase());
+					}
 				}
 			}
 		}
@@ -265,6 +271,10 @@ Detect.prototype = {
 		return plugin.split(' ').join('_').toLowerCase();
 	},
 
+	/**
+	 * [PluginUtility]
+	 * @type {Object}
+	 */
 	PluginUtility: {
 		isPluginInstalled: function(plugin_slug){
 			//in_array
