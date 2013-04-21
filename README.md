@@ -31,12 +31,12 @@ output:
 ## Options
 
 <table>
-	<tr>
+	<th>
 		<td>Key</td>
 		<td>Type</td>
 		<td>Value</td>
 		<td>Default</td>
-	</tr>
+	</th>
 	<tr>
 		<td>format</td>
 		<td>bool</td>
@@ -53,5 +53,6 @@ output:
 		<td>classPrefix</td>
 		<td>string</td>
 		<td>Add a prefix to classes on the body node, if the `addClasses` option is set to true.</td>
+		<td>default</td>
 	</tr>
 </table>
