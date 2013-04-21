@@ -157,7 +157,7 @@ Detect.prototype = {
 	 */
 	os: function(options){
 		var parts = this._Navigator.userAgent.split(/\s*[;)(]\s*/),
-			output = {system: this._OS.UNKNOWN.name, bits: this._OS.UNKNOWN.bits};
+			output = {system: this._OS.UNKNOWN.name, architecture: this._OS.UNKNOWN.architecture};
 			bits = this.bits();
 
 		switch(this._Navigator.platform.toLowerCase().split(' ')[0] || parts[3].toLowerCase()){
