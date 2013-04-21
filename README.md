@@ -1,4 +1,4 @@
-# DetectBrowser
+# Detect.js
 
 Like the title says.  Fairly accurate browser detection, though I only had a chance to test it on Windows (Chrome/Firefox) and Linux (Chrome/Firefox).
 
