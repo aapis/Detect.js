@@ -24,13 +24,15 @@
 		<script type="text/javascript">
 			window.onload = function(){
 				var info = new Detect({
-					format: true,
+					format: false,
 					addClasses: true,
 					classPrefix: 'default',
+					installPluginUtility: true,
 				});
 
 				//to view the full object, open your console
 				console.log(info);
+				console.log(PluginUtility.getVersion('divx_web_player'));
 
 				document.querySelector('.browser').innerHTML = '<strong>'+ info.browser.name +' '+ info.browser.engine +' '+ info.browser.version + '</strong>';
 				document.querySelector('.os').innerHTML = '<strong>'+ info.os.system +'</strong>';
