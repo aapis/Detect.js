@@ -31,12 +31,12 @@ output:
 ## Options
 
 <table>
-	<th>
-		<td>Key</td>
-		<td>Type</td>
-		<td>Value</td>
-		<td>Default</td>
-	</th>
+	<tr>
+		<th>Key</th>
+		<th>Type</th>
+		<th>Value</th>
+		<th>Default</th>
+	</tr>
 	<tr>
 		<td>format</td>
 		<td>bool</td>
