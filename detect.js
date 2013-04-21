@@ -48,10 +48,10 @@ Detect.prototype = {
 	 * @type {Object}
 	 */
 	_OS: {
-		UNKNOWN: {name: 'Unknown', bits: 'x86'},
-		MAC: {name: 'Mac', bits: 'x86'},
-		WINDOWS: {name: 'Windows', bits: 'x86'},
-		LINUX: {name: 'Linux', bits: 'x86'},
+		UNKNOWN: {name: 'Unknown', architecture: '32'},
+		MAC: {name: 'Mac', architecture: '32'},
+		WINDOWS: {name: 'Windows', architecture: '32'},
+		LINUX: {name: 'Linux', architecture: '32'},
 	},
 
 	/**
@@ -164,15 +164,15 @@ Detect.prototype = {
 			case 'macintel':
 			case 'macppc':
 				output.system = this._OS.MAC.name;
-				output.bits = (bits ? bits : this._OS.MAC.bits); break;
+				output.architecture = (bits ? bits : this._OS.MAC.bits); break;
 
 			case 'win32':
 				output.system = this._OS.WINDOWS.name;
-				output.bits = (bits ? bits : this._OS.WINDOWS.bits); break;
+				output.architecture = (bits ? bits : this._OS.WINDOWS.bits); break;
 
 			case 'linux':
 				output.system = this._OS.LINUX.name;
-				output.bits = (bits ? bits : this._OS.LINUX.bits); break;
+				output.architecture = (bits ? bits : this._OS.LINUX.bits); break;
 		}
 
 		return output;
@@ -192,14 +192,14 @@ Detect.prototype = {
 		
 		switch(this._Navigator.platform.toLowerCase().split(' ')[0] || parts[3].toLowerCase()){
 			case 'macintel':
-				output = 'x64'; break;
+				output = '64'; break;
 
 			case 'macppc':
-				output = 'x86'; break;
+				output = '32'; break;
 
 			//not tested yet
 			case 'win32': 
-				output = (parts[2].match(/wow64/i) ? 'x64' : 'x86'); break;
+				output = (parts[2].match(/wow64/i) ? '64' : '32'); break;
 
 			//not tested yet
 			case 'linux': break;
@@ -259,11 +259,21 @@ Detect.prototype = {
 		for(var prop in ref){
 			if(ref[prop] && typeof ref[prop] === 'object'){
 				for(var iprop in ref[prop]){
-					if( typeof ref[prop][iprop] === 'string'){ //ignore the plugin array
-						if(useDefault){
-							document.body.classList.add(iprop +'-'+ ref[prop][iprop].toLowerCase());	
-						}else {
-							document.body.classList.add(options.classPrefix + iprop +'-'+ ref[prop][iprop].toLowerCase());
+					if(ref[prop][iprop]){ //ignore undefined or null values
+						if(typeof ref[prop][iprop] === 'string'){ //system, architecture, browser name, browser engine, etc
+							if(useDefault){
+								document.querySelector('html').classList.add(iprop +'-'+ ref[prop][iprop].toLowerCase());	
+							}else {
+								document.querySelector('html').classList.add(options.classPrefix + iprop +'-'+ ref[prop][iprop].toLowerCase());
+							}
+						}else { //plugin array
+							for(var i = 0, plgs = ref[prop][iprop]; i < plgs.length; i++){
+								if(useDefault){
+									document.querySelector('html').classList.add('plugin-'+ plgs[i].slug.toLowerCase());	
+								}else {
+									document.querySelector('html').classList.add(options.classPrefix + 'plugin-'+ plgs[i].slug.toLowerCase());
+								}
+							}
 						}
 					}
 				}
