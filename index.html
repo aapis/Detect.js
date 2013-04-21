@@ -32,10 +32,11 @@
 
 				//to view the full object, open your console
 				console.log(info);
-				console.log(PluginUtility.getVersion('divx_web_player'));
 
 				document.querySelector('.browser').innerHTML = '<strong>'+ info.browser.name +' '+ info.browser.engine +' '+ info.browser.version + '</strong>';
 				document.querySelector('.os').innerHTML = '<strong>'+ info.os.system +'</strong>';
+				document.querySelector('.player_version').innerHTML = '<strong>'+ PluginUtility.getVersion('divx_web_player') +'</strong>';
+				document.querySelector('.player_installed').innerHTML = '<strong>'+ PluginUtility.isInstalled('divx_web_player') +'</strong>';
 				document.querySelector('.plugins').innerHTML = info.plugins;
 			}
 		</script>
@@ -51,6 +52,8 @@
 
 				</ul>
 			</p>
+			<p>Divx web player version: <span class="player_version">0.0.0</span></p>
+			<p>Is divx web player installed? <span class="player_installed">null</span></p>
 			<p>Check your console for the full object.</p>
 		</div>
 	</body>
