@@ -33,10 +33,25 @@ output:
 <table>
 	<tr>
 		<td>Key</td>
+		<td>Type</td>
 		<td>Value</td>
+		<td>Default</td>
 	</tr>
 	<tr>
 		<td>format</td>
-		<td>{bool} Format for output in the browser (TRUE) or output to console (FALSE)</td>
+		<td>bool</td>
+		<td>Format for output in the browser (TRUE) or output to console (FALSE)</td>
+		<td>false</td>
+	</tr>
+	<tr>
+		<td>addClasses</td>
+		<td>bool</td>
+		<td>Add detected browser and system information to the class list of the body node.</td>
+		<td>true</td>
+	</tr>
+	<tr>
+		<td>classPrefix</td>
+		<td>string</td>
+		<td>Add a prefix to classes on the body node, if the `addClasses` option is set to true.</td>
 	</tr>
 </table>
