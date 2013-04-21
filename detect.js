@@ -247,15 +247,15 @@ Detect.prototype = {
 	 */
 	_addClasses: function(options, ref){
 		var output = '',
-			useDefault = (options.bodyClassPrefix === 'default');
+			useDefault = (options.classPrefix === 'default');
 
 		for(var prop in ref){
-			if(typeof ref[prop] === 'object'){
+			if(ref[prop] && typeof ref[prop] === 'object'){
 				for(var iprop in ref[prop]){
 					if(useDefault){
 						document.body.classList.add(iprop +'-'+ ref[prop][iprop].toLowerCase());	
 					}else {
-						document.body.classList.add(options.bodyClassPrefix + iprop +'-'+ ref[prop][iprop].toLowerCase());
+						document.body.classList.add(options.classPrefix + iprop +'-'+ ref[prop][iprop].toLowerCase());
 					}
 				}
 			}
