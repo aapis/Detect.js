@@ -5,7 +5,14 @@
  * @type {Object}
  */
 var Detect = function(options){
-	return this.do(options);
+	var retVal = this.do(options);
+
+	//add plugin utility to the global scope
+	if(options.installPluginUtility){
+		window.PluginUtility = new this.PluginUtility(retVal);
+	}
+
+	return retVal;
 }
 
 Detect.prototype = {
@@ -252,10 +259,12 @@ Detect.prototype = {
 		for(var prop in ref){
 			if(ref[prop] && typeof ref[prop] === 'object'){
 				for(var iprop in ref[prop]){
-					if(useDefault){
-						document.body.classList.add(iprop +'-'+ ref[prop][iprop].toLowerCase());	
-					}else {
-						document.body.classList.add(options.classPrefix + iprop +'-'+ ref[prop][iprop].toLowerCase());
+					if( typeof ref[prop][iprop] === 'string'){ //ignore the plugin array
+						if(useDefault){
+							document.body.classList.add(iprop +'-'+ ref[prop][iprop].toLowerCase());	
+						}else {
+							document.body.classList.add(options.classPrefix + iprop +'-'+ ref[prop][iprop].toLowerCase());
+						}
 					}
 				}
 			}
@@ -265,6 +274,7 @@ Detect.prototype = {
 	/**
 	 * [_slug Generate a slug that is easier to remember than the real plugin name]
 	 * @param  {string} plugin [Plugin name to process]
+	 * @since  1.0.0
 	 * @return {string}
 	 */
 	_slug: function(plugin){
@@ -272,17 +282,57 @@ Detect.prototype = {
 	},
 
 	/**
-	 * [PluginUtility]
+	 * PluginUtility
+	 * 
+	 * @since  1.0.0
 	 * @type {Object}
 	 */
-	PluginUtility: {
-		isPluginInstalled: function(plugin_slug){
-			//in_array
-		},
+	PluginUtility: function(context){
+		/**
+		 * [Detect Reference to the Detect object]
+		 * @type {[type]}
+		 */
+		var Detect = context;
 
-		getPluginVersion: function(plugin_slug){
-			//pass
-		},
+		/**
+		 * [isInstalled Determine if a plugin is installed]
+		 * @param  {string}  plugin_slug [The slug to compare each installed plugin against]
+		 * @since  1.0.0
+		 * @return {Boolean}
+		 */
+		this.isInstalled = function(plugin_slug){
+			var found = 0;
+
+			if(plugin_slug && typeof Detect.plugins === 'object'){
+				for(var i = 0, plgs = Detect.plugins.content; i < plgs.length; i++){
+					if(plugin_slug === plgs[i].slug){
+						found++;
+					}
+				}
+			}
+
+			return (found > 0);
+		};
+
+		/**
+		 * [getVersion Determine the version of a specified plugin]
+		 * @param  {string} plugin_slug [The slug to compare each installed plugin against]
+		 * @since  1.0.0
+		 * @return {mixed}
+		 */
+		this.getVersion = function(plugin_slug){
+			if(plugin_slug && typeof Detect.plugins === 'object'){
+				for(var i = 0, plgs = Detect.plugins.content; i < plgs.length; i++){
+					if(plgs[i].slug === plugin_slug){
+						//if there is a version string in either the name or the description, we will use it
+						if(/\d+(\d+)?/g.test(plgs[i].name) || /\d+(\d+)?/g.test(plgs[i].description))
+							return plgs[i].description.match(/\d+(\d+)?/g).join('.');
+					}
+				}
+			}
+
+			return false;
+		};
 	},
 };
 
