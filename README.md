@@ -55,4 +55,10 @@ output:
 		<td>Add a prefix to classes on the body node, if the `addClasses` option is set to true.</td>
 		<td>default</td>
 	</tr>
+	<tr>
+		<td>installPluginUtility</td>
+		<td>bool</td>
+		<td>Set whether or not to install the plugin utilities functions.</td>
+		<td>true</td>
+	</tr>
 </table>
