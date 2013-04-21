@@ -61,6 +61,12 @@ Detect.prototype = {
 	 * @return {object} [Aggregated data from both this.browser and this.os]
 	 */
 	do: function(options){
+		//set options to either a default or the chosen value
+		options.format = (options.format || false);
+		options.addClasses = (options.addClasses || true);
+		options.classPrefix = (options.classPrefix || 'default');
+		options.installPluginUtility = (options.installPluginUtility || true);
+
 		var output = {
 			os: this.os(),
 			browser: this.browser(),
