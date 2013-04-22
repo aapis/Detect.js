@@ -1,0 +1,99 @@
+<html>
+	<head>
+		<title>Detect.js Tests</title>
+
+		<style type="text/css">
+			body {
+				margin: 0px;
+				padding: 10px;
+				font-family: sans-serif;
+				background: #333;
+				color: #eee;
+			}
+
+			span, strong {
+				color: lime;
+			}
+
+			ul {
+				list-style: none;
+				padding: 0px;
+				margin-bottom: 0px;
+			}
+
+			ul li {
+				background: #444;
+				margin-bottom: 1px;
+			}
+
+			ul li a {
+				color: white;
+				display: block;
+				padding: 8px;
+				text-decoration: none;
+			}
+
+			ul li a:hover {
+				background-color: #555;
+			}
+
+			ul li.active a {
+				background: lime;
+				color: black;
+			}
+
+			.wrapper {
+				margin: 0 auto;
+				width: 960px;
+			}
+
+			.product-example {
+				background: #222;
+				border-radius: 5px;
+				padding: 10px;
+				margin-bottom: 1em;
+			}
+
+			.product-example h3 {
+				margin-top: 0px;
+			}
+
+			.ignorecase {
+				text-transform: capitalize;
+			}
+		</style>
+		<script type="text/javascript" src="detect.js"></script>
+		<script type="text/javascript">
+			window.onload = function(){
+				var info = new Detect();
+				console.log(info);
+
+				//example #1
+				document.querySelector('.'+ info.os.system).classList.add('active');
+
+				//example #2
+				document.querySelector('.browser').innerText = info.browser.name +' '+ info.browser.version;
+			}
+		</script>
+	</head>
+	<body>
+		<div class="wrapper">
+			<h1>Detect.js;</h1>
+			<h2>Examples</h2>
+			
+			<div class="product-example">
+				<h3>Downloads for MyApp (<strong>Recommended</strong>)</h3>
+				<ul>
+					<li class="mac"><a href="#">OSX</a></li>
+					<li class="windows"><a href="#">Windows</a></li>
+					<li class="linux"><a href="#">Linux</a></li>
+				</ul>
+			</div>
+
+			<div class="product-example">
+				<h3>Welcome to MyWebsite</h3>
+				<p>I see you're using <span class="browser ignorecase">Unknown</span>, but this site really runs better using <span>IE4</span>.  Please consider upgrading, thanks!</p>
+			</div>
+		</div>
+	</body>
+</html>
