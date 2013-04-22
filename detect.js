@@ -5,6 +5,13 @@
  * @type {Object}
  */
 var Detect = function(options){
+	//set options to either a default or the chosen value
+	options = options || {};
+	options.format = options.format || false;
+	options.addClasses = options.addClasses || true;
+	options.classPrefix = options.classPrefix || 'default';
+	options.installPluginUtility = options.installPluginUtility || true;
+	
 	var retVal = this.do(options);
 
 	//add plugin utility to the global scope
@@ -58,14 +65,9 @@ Detect.prototype = {
 	 * [do Sets the _Browser and _OS variables]
 	 * @param {object} options
 	 * @since  1.0.0
-	 * @return {object} [Aggregated data from both this.browser and this.os]
+	 * @return {object} [Aggregated data from this.browser, this.os and this.plugins]
 	 */
 	do: function(options){
-		//set options to either a default or the chosen value
-		options.format = (options.format || false);
-		options.addClasses = (options.addClasses || true);
-		options.classPrefix = (options.classPrefix || 'default');
-		options.installPluginUtility = (options.installPluginUtility || true);
 
 		var output = {
 			os: this.os(),
@@ -152,6 +154,12 @@ Detect.prototype = {
 			output = this._Browsers.IE;
 		}
 
+		//opera/presto
+		
+
+		//opera/blink
+		
+
 		return output;
 	},
 
@@ -164,7 +172,7 @@ Detect.prototype = {
 	os: function(options){
 		var parts = this._Navigator.userAgent.split(/\s*[;)(]\s*/),
 			output = {system: this._OS.UNKNOWN.name, architecture: this._OS.UNKNOWN.architecture};
-			bits = this.bits();
+			bits = this._bits();
 
 		switch(this._Navigator.platform.toLowerCase().split(' ')[0] || parts[3].toLowerCase()){
 			case 'macintel':
@@ -185,36 +193,6 @@ Detect.prototype = {
 	},
 
 	/**
-	 * [bits Determine the CPU architecture - x86 or x64]
-	 * Note: some browsers don't broadcast the system architecture 
-	 * so this will make it's best guess
-	 * 
-	 * @since  1.0.0
-	 * @return {mixed} [bool|string]
-	 */
-	bits: function(){
-		var parts = this._Navigator.userAgent.split(/\s*[;)(]\s*/),
-			output = '';
-		
-		switch(this._Navigator.platform.toLowerCase().split(' ')[0] || parts[3].toLowerCase()){
-			case 'macintel':
-				output = '64'; break;
-
-			case 'macppc':
-				output = '32'; break;
-
-			//not tested yet
-			case 'win32': 
-				output = (parts[2].match(/wow64/i) ? '64' : '32'); break;
-
-			//not tested yet
-			case 'linux': break;
-		}
-
-		return output;
-	},
-
-	/**
 	 * [plugins Determine what plugins, if any, the browser is running]
 	 * @param {object} options [Any required settings]
 	 * @since  1.0.0
@@ -223,7 +201,7 @@ Detect.prototype = {
 	plugins: function(options){
 		var output = {};
 
-		if(this._Navigator.plugins || this._Navigator.plugins.length > 1){
+		if(this._Navigator.plugins && this._Navigator.plugins.length > 1){
 			output.content = [];
 
 			if(options.format){
@@ -247,6 +225,36 @@ Detect.prototype = {
 			}
 		}
 		
+		return output;
+	},
+
+	/**
+	 * [_bits Determine the CPU architecture - x86 or x64]
+	 * Note: some browsers don't broadcast the system architecture 
+	 * so this will make it's best guess
+	 * 
+	 * @since  1.0.0
+	 * @return {mixed} [bool|string]
+	 */
+	_bits: function(){
+		var parts = this._Navigator.userAgent.split(/\s*[;)(]\s*/),
+			output = '';
+		
+		switch(this._Navigator.platform.toLowerCase().split(' ')[0] || parts[3].toLowerCase()){
+			case 'macintel':
+				output = '64'; break;
+
+			case 'macppc':
+				output = '32'; break;
+
+			//not tested yet
+			case 'win32': 
+				output = (parts[2].match(/wow64/i) ? '64' : '32'); break;
+
+			//not tested yet
+			case 'linux': break;
+		}
+
 		return output;
 	},
 
