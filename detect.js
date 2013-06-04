@@ -27,14 +27,14 @@ var Detect = function(options){
 
 Detect.prototype = {
 	/**
-	 * [_Navigator Copy of the window.navigator object so we can add/remove things if necessary]
+	 * Copy of the window.navigator object so we can add/remove things if necessary
 	 * @since  1.0.0
 	 * @type {Object}
 	 */
 	_Navigator: window.navigator,
 
 	/**
-	 * [_Browser Object that contains commonly required strings from the UA]
+	 * Object that contains commonly required strings from the UA
 	 * NOTE: accessing directly will give you incorrect data, use Detect.browser() 
 	 * to access this data instead
 	 * 
@@ -53,7 +53,7 @@ Detect.prototype = {
 	},
 
 	/**
-	 * [_OS User's operating system text placeholders]
+	 * User's operating system text placeholders
 	 * @since  1.0.0
 	 * @type {Object}
 	 */
@@ -65,7 +65,7 @@ Detect.prototype = {
 	},
 
 	/**
-	 * [do Sets the _Browser and _OS variables]
+	 * Sets the _Browser and _OS variables
 	 * @param {object} options
 	 * @since  1.0.0
 	 * @return {object} [Aggregated data from this.browser, this.os and this.plugins]
@@ -95,7 +95,7 @@ Detect.prototype = {
 	},
 
 	/**
-	 * [browser Determine the user's browser]
+	 * Determine the user's browser
 	 * @param {object} options [Any required settings]
 	 * @since  1.0.0
 	 * @return {object}
@@ -176,7 +176,7 @@ Detect.prototype = {
 	},
 
 	/**
-	 * [os Determine the user's operating system]
+	 * Determine the user's operating system
 	 * @param {object} options [Any required settings]
 	 * @since  1.0.0
 	 * @return {string}
@@ -205,7 +205,7 @@ Detect.prototype = {
 	},
 
 	/**
-	 * [plugins Determine what plugins, if any, the browser is running]
+	 * Determine what plugins, if any, the browser is running
 	 * @param {object} options [Any required settings]
 	 * @since  1.0.0
 	 * @return {object}
@@ -241,7 +241,7 @@ Detect.prototype = {
 	},
 
 	/**
-	 * [_bits Determine the CPU architecture - x86 or x64]
+	 * Determine the CPU architecture - 32 or 64
 	 * Note: some browsers don't broadcast the system architecture 
 	 * so this will make it's best guess
 	 * 
@@ -264,14 +264,15 @@ Detect.prototype = {
 				output = (parts[2].match(/wow64/i) ? '64' : '32'); break;
 
 			//not tested yet
-			case 'linux': break;
+			case 'linux': 
+				break;
 		}
 
 		return output;
 	},
 
 	/**
-	 * [_addClasses Add classes to the body element if options.addBodyClasses is true]
+	 * Add classes to the body element if options.addBodyClasses is true
 	 *
 	 * @param {object} options
 	 * @param {object} ref [The object we use to determine the proper class names]
@@ -287,17 +288,19 @@ Detect.prototype = {
 				for(var iprop in ref[prop]){
 					if(ref[prop][iprop]){ //ignore undefined or null values
 						if(typeof ref[prop][iprop] === 'string'){ //system, architecture, browser name, browser engine, etc
+							var html_el = document.querySelector('html');
+
 							if(useDefault){
-								document.querySelector('html').classList.add(iprop +'-'+ ref[prop][iprop].toLowerCase());	
+								html_el.classList.add(iprop +'-'+ ref[prop][iprop].toLowerCase());	
 							}else {
-								document.querySelector('html').classList.add(options.classPrefix + iprop +'-'+ ref[prop][iprop].toLowerCase());
+								html_el.classList.add(options.classPrefix + iprop +'-'+ ref[prop][iprop].toLowerCase());
 							}
 						}else { //plugin array
 							for(var i = 0, plgs = ref[prop][iprop]; i < plgs.length; i++){
 								if(useDefault){
-									document.querySelector('html').classList.add('plugin-'+ plgs[i].slug.toLowerCase());	
+									html_el.classList.add('plugin-'+ plgs[i].slug.toLowerCase());	
 								}else {
-									document.querySelector('html').classList.add(options.classPrefix + 'plugin-'+ plgs[i].slug.toLowerCase());
+									html_el.classList.add(options.classPrefix + 'plugin-'+ plgs[i].slug.toLowerCase());
 								}
 							}
 						}
@@ -308,7 +311,7 @@ Detect.prototype = {
 	},
 
 	/**
-	 * [_slug Generate a slug that is easier to remember than the real plugin name]
+	 * Generate a slug that is easier to remember than the real plugin name
 	 * @param  {string} plugin [Plugin name to process]
 	 * @since  1.0.0
 	 * @return {string}
@@ -325,13 +328,13 @@ Detect.prototype = {
 	 */
 	PluginUtility: function(context){
 		/**
-		 * [Detect Reference to the Detect object]
+		 * Reference to the Detect object
 		 * @type {[type]}
 		 */
 		var Detect = context;
 
 		/**
-		 * [isInstalled Determine if a plugin is installed]
+		 * Determine if a plugin is installed
 		 * @param  {string}  plugin_slug [The slug to compare each installed plugin against]
 		 * @since  1.0.0
 		 * @return {Boolean}
@@ -351,7 +354,7 @@ Detect.prototype = {
 		};
 
 		/**
-		 * [getVersion Determine the version of a specified plugin]
+		 * Determine the version of a specified plugin
 		 * @param  {string} plugin_slug [The slug to compare each installed plugin against]
 		 * @since  1.0.0
 		 * @return {mixed}
