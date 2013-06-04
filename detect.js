@@ -11,6 +11,9 @@ var Detect = function(options){
 	options.addClasses = options.addClasses || true;
 	options.classPrefix = options.classPrefix || 'default';
 	options.installPluginUtility = options.installPluginUtility || true;
+	options.noPlugins = options.noPlugins || false;
+	options.noOS = options.noOS || false;
+	options.noBrowser = options.noBrowser || false;
 	
 	var retVal = this.do(options);
 
@@ -74,6 +77,15 @@ Detect.prototype = {
 			browser: this.browser(),
 			plugins: this.plugins(options),
 		};
+
+		if(options.noPlugins)
+			delete output.plugins;
+
+		if(options.noOS)
+			delete output.os;
+
+		if(options.noBrowser)
+			delete output.browser;
 
 		if(options.addClasses){
 			this._addClasses(options, output);
