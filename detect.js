@@ -65,12 +65,21 @@ Detect.prototype = {
 	},
 
 	/**
+	 * All the functions that return a useful value run a regex statement, so
+	 * lets run it globally once instead of 3 times
+	 * @since  1.0.0
+	 * @type {array}
+	 */
+	_navParts: [],
+
+	/**
 	 * Sets the _Browser and _OS variables
 	 * @param {object} options
 	 * @since  1.0.0
 	 * @return {object} [Aggregated data from this.browser, this.os and this.plugins]
 	 */
 	do: function(options){
+		this._navParts = this._Navigator.userAgent.split(/\s*[;)(]\s*/);
 
 		var output = {
 			os: this.os(),
@@ -87,10 +96,9 @@ Detect.prototype = {
 		if(options.noBrowser)
 			delete output.browser;
 
-		if(options.addClasses){
+		if(options.addClasses)
 			this._addClasses(options, output);
-		}
-
+		
 		return output;
 	},
 
@@ -101,18 +109,17 @@ Detect.prototype = {
 	 * @return {object}
 	 */
 	browser: function(options){
-		var parts = this._Navigator.userAgent.split(/\s*[;)(]\s*/),
-			output = this._Browsers.UNKNOWN,
+		var output = this._Browsers.UNKNOWN,
 			os = this.os().system;
 
 		//safari/webkit
-		if(/^Version/.test(parts[5]) && /Safari/.test(parts[5])){
+		if(/^Version/.test(this._navParts[5]) && /Safari/.test(this._navParts[5])){
 			switch(os){
 				case this._OS.MAC.system:
-					this._Browsers.SAFARI.version = parts[5].split(' ')[0].substring(8); break;
+					this._Browsers.SAFARI.version = this._navParts[5].split(' ')[0].substring(8); break;
 
 				default:
-					this._Browsers.SAFARI.version = parts[5].split(' ')[0].substring(8);
+					this._Browsers.SAFARI.version = this._navParts[5].split(' ')[0].substring(8);
 
 			}
 
@@ -120,13 +127,13 @@ Detect.prototype = {
 		}
 
 		//chrome/webkit
-		if(/^Chrome/.test(parts[5]) && /^AppleWebKit/.test(parts[3])){
+		if(/^Chrome/.test(this._navParts[5]) && /^AppleWebKit/.test(this._navParts[3])){
 			switch(os){
 				case this._OS.MAC.system:
-					this._Browsers.CHROME_WEBKIT.version = parts[5].split(' ')[0].substring(8); break;
+					this._Browsers.CHROME_WEBKIT.version = this._navParts[5].split(' ')[0].substring(8); break;
 
 				default:
-					this._Browsers.CHROME_WEBKIT.version = parts[5].split(' ')[0].substring(7);
+					this._Browsers.CHROME_WEBKIT.version = this._navParts[5].split(' ')[0].substring(7);
 			}
 
 			output = this._Browsers.CHROME_WEBKIT;
@@ -137,8 +144,8 @@ Detect.prototype = {
 		//but I don't believe them so instead of waiting for them to secretly
 		//change something I'll just assume that anything >=28 is Blink and <28
 		//is Webkit
-		if(/^Chrome/.test(parts[5]) && /^AppleWebKit/.test(parts[3])){
-			this._Browsers.CHROME_BLINK.version = parts[5].substring(7, 19);
+		if(/^Chrome/.test(this._navParts[5]) && /^AppleWebKit/.test(this._navParts[3])){
+			this._Browsers.CHROME_BLINK.version = this._navParts[5].substring(7, 19);
 
 			if(parseInt(this._Browsers.CHROME_BLINK.version) >= 28) { //version 28 is first public release with Blink instead of Webkit
 				output = this._Browsers.CHROME_BLINK;
@@ -146,22 +153,22 @@ Detect.prototype = {
 		}
 
 		//firefox/gecko
-		if(/^(Gecko|Firefox)/.test(parts[4]) || /^(Gecko|Firefox)/.test(parts[5])){ //Linux UA has 6, Windows has 5
+		if(/^(Gecko|Firefox)/.test(this._navParts[4]) || /^(Gecko|Firefox)/.test(this._navParts[5])){ //Linux UA has 6, Windows has 5
 			switch(os){
 				case this._OS.LINUX.system:
-					this._Browsers.FIREFOX.version = parts[5].split(' ')[1].substring(8); break;
+					this._Browsers.FIREFOX.version = this._navParts[5].split(' ')[1].substring(8); break;
 
 				case this._OS.WINDOWS.system:
-					this._Browsers.FIREFOX.version = parts[4].split(' ')[1].substring(8); break;
+					this._Browsers.FIREFOX.version = this._navParts[4].split(' ')[1].substring(8); break;
 			}
 			
 			output = this._Browsers.FIREFOX;
 		}
 
 		//ie/trident
-		if(/^MSIE/.test(parts[2])){
-			this._Browsers.IE.engine = parts[5].split('/')[0]; //we can get a little more specific here, so why not
-			this._Browsers.IE.version = parts[5].split('/')[1];
+		if(/^MSIE/.test(this._navParts[2])){
+			this._Browsers.IE.engine = this._navParts[5].split('/')[0]; //we can get a little more specific here, so why not
+			this._Browsers.IE.version = this._navParts[5].split('/')[1];
 
 			output = this._Browsers.IE;
 		}
@@ -182,11 +189,10 @@ Detect.prototype = {
 	 * @return {string}
 	 */
 	os: function(options){
-		var parts = this._Navigator.userAgent.split(/\s*[;)(]\s*/),
-			output = {system: this._OS.UNKNOWN.name, architecture: this._OS.UNKNOWN.architecture};
+		var output = {system: this._OS.UNKNOWN.name, architecture: this._OS.UNKNOWN.architecture};
 			bits = this._bits();
 
-		switch(this._Navigator.platform.toLowerCase().split(' ')[0] || parts[3].toLowerCase()){
+		switch(this._Navigator.platform.toLowerCase().split(' ')[0] || this._navParts[3].toLowerCase()){
 			case 'macintel':
 			case 'macppc':
 				output.system = this._OS.MAC.name;
@@ -249,10 +255,9 @@ Detect.prototype = {
 	 * @return {mixed} [bool|string]
 	 */
 	_bits: function(){
-		var parts = this._Navigator.userAgent.split(/\s*[;)(]\s*/),
-			output = '';
+		var output = '';
 		
-		switch(this._Navigator.platform.toLowerCase().split(' ')[0] || parts[3].toLowerCase()){
+		switch(this._Navigator.platform.toLowerCase().split(' ')[0] || this._navParts[3].toLowerCase()){
 			case 'macintel':
 				output = '64'; break;
 
@@ -261,7 +266,7 @@ Detect.prototype = {
 
 			//not tested yet
 			case 'win32': 
-				output = (parts[2].match(/wow64/i) ? '64' : '32'); break;
+				output = (this._navParts[2].match(/wow64/i) ? '64' : '32'); break;
 
 			//not tested yet
 			case 'linux': 
