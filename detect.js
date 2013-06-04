@@ -303,9 +303,9 @@ Detect.prototype = {
 						}else { //plugin array
 							for(var i = 0, plgs = ref[prop][iprop]; i < plgs.length; i++){
 								if(useDefault){
-									html_el.classList.add('plugin-'+ plgs[i].slug.toLowerCase());	
+									html_el.classList.add(this._sanitize('plugin-'+ plgs[i].slug.toLowerCase()));
 								}else {
-									html_el.classList.add(options.classPrefix + 'plugin-'+ plgs[i].slug.toLowerCase());
+									html_el.classList.add(this._sanitize(options.classPrefix + 'plugin-'+ plgs[i].slug.toLowerCase()));
 								}
 							}
 						}
@@ -323,6 +323,17 @@ Detect.prototype = {
 	 */
 	_slug: function(plugin){
 		return plugin.split(' ').join('_').toLowerCase();
+	},
+
+	/**
+	 * Sanitize plugin names to remove things like symbols and vesion numbers
+	 * @param  {string} plugin [Plugin name to process]
+	 * @return {string}
+	 */
+	_sanitize: function(plugin){
+		var pattern = new RegExp('[a-zA-Z-_]+', 'gi');
+		
+		return pattern.exec(plugin);
 	},
 
 	/**
