@@ -11,6 +11,7 @@ var Detect = function(options){
 	options.addClasses = options.addClasses || true;
 	options.classPrefix = options.classPrefix || 'default';
 	options.installPluginUtility = options.installPluginUtility || true;
+	options.installTests = options.installTests || false;
 	options.noPlugins = options.noPlugins || false;
 	options.noOS = options.noOS || false;
 	options.noBrowser = options.noBrowser || false;
@@ -18,9 +19,11 @@ var Detect = function(options){
 	var retVal = this.do(options);
 
 	//add plugin utility to the global scope
-	if(options.installPluginUtility){
-		window.PluginUtility = new this.PluginUtility(retVal);
-	}
+	if(options.installPluginUtility)
+		window.DJS_PluginUtility = new this.PluginUtility(retVal);
+
+	if(options.installTests)
+		window.DJS_Tests = new this.Tests(retVal);
 
 	return retVal;
 }
@@ -338,10 +341,26 @@ Detect.prototype = {
 		return pattern.exec(plugin);
 	},
 
+	/************************************************************
+	 * Utility plugins
+	 ************************************************************/
+
+	/**
+	 * Tests
+	 *
+	 * @since  1.0.0
+	 * @param  {object} context [The Detect object]
+	 * @return {object}
+	 */
+	Tests: function(context){
+		//object of all the browsers we are testing for
+	},
+
 	/**
 	 * PluginUtility
 	 * 
 	 * @since  1.0.0
+	 * @param {object} context [The Detect object]
 	 * @type {Object}
 	 */
 	PluginUtility: function(context){
