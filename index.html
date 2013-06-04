@@ -19,6 +19,91 @@
 				margin: 0 auto;
 				width: 960px;
 			}
+
+			ul {
+				list-style: none;
+				padding: 0px;
+				margin-bottom: 0px;
+			}
+
+			ul li {
+				background: #444;
+				margin-bottom: 1px;
+			}
+
+			ul li a {
+				color: white;
+				display: block;
+				padding: 8px;
+				text-decoration: none;
+			}
+
+			ul li a:hover {
+				background-color: #555;
+			}
+
+			ul li.active a {
+				background: lime;
+				color: black;
+			}
+
+			.wrapper {
+				margin: 0 auto;
+				width: 960px;
+			}
+
+			.product-example {
+				background: #222;
+				border-radius: 5px;
+				padding: 10px;
+				margin-bottom: 1em;
+			}
+
+			.product-example h3 {
+				margin-top: 0px;
+			}
+
+			.ignorecase {
+				text-transform: capitalize;
+			}
+
+			a, a:hover {
+				color: white;
+			}
+
+			nav a {
+				background: #222;
+				padding: 8px 12px;
+				text-decoration: none;
+				border-top-left-radius: 4px;
+				border-top-right-radius: 4px;
+				color: #ccc;
+			}
+
+			nav a.active {
+				background: lime;
+				color: black;
+			}
+
+			nav {
+				margin-bottom: 5px;
+			}
+
+			.product-example {
+				background: #222;
+				border-radius: 5px;
+				padding: 10px;
+				margin-bottom: 1em;
+				border-top-left-radius: 0px;
+			}
+
+			.product-example h3 {
+				margin-top: 0px;
+			}
+
+			.hide {
+				display: none;
+			}
 		</style>
 		<script type="text/javascript" src="detect.js"></script>
 		<script type="text/javascript">
@@ -28,6 +113,7 @@
 					addClasses: true,
 					classPrefix: 'default',
 					installPluginUtility: true,
+					noPlugins: true,
 				});
 
 				//to view the full object, open your console
@@ -38,6 +124,40 @@
 				document.querySelector('.player_version').innerHTML = '<strong>'+ PluginUtility.getVersion('divx_web_player') +'</strong>';
 				document.querySelector('.player_installed').innerHTML = '<strong>'+ PluginUtility.isInstalled('divx_web_player') +'</strong>';
 				document.querySelector('.plugins').innerHTML = info.plugins;
+
+				//example #1
+				document.querySelector('.'+ info.os.system).classList.add('active');
+
+				//example #2
+				document.querySelector('.b').innerText = info.browser.name +' '+ info.browser.version;
+
+				//tab functionality
+				for(var i = 0, link = document.querySelectorAll('nav a'); i < link.length; i++){
+					var obj = link[i];
+
+					obj.addEventListener('click', function(){
+						var homeSection = document.querySelector('.product-example.home'),
+							examplesSection = document.querySelector('.product-example.examples'),
+							exampleTab = document.querySelector('nav a.examples'),
+							homeTab = document.querySelector('nav a.home');
+
+						this.classList.add('active');
+
+						if(this.classList.contains('examples')){
+							homeSection.classList.add('hide');
+							homeTab.classList.remove('active');
+						}else {
+							homeSection.classList.remove('hide');
+						}
+
+						if(this.classList.contains('home')){
+							examplesSection.classList.add('hide');
+							exampleTab.classList.remove('active');
+						}else {
+							examplesSection.classList.remove('hide');
+						}
+					});
+				}
 			}
 		</script>
 	</head>
@@ -45,16 +165,36 @@
 		<div class="wrapper">
 			<h1>Detect.js;</h1>
 			<h2>A cross-browser, library-independent browser/system information detection script</h2>
-			<p>Your browser is: <span class="browser">Unknown</span></p>
-			<p>Your OS is: <span class="os">Unknown</span></p>
-			<p>Installed plugins: 
-				<ul class="plugins">
+			<nav>
+				<a href="#" class="home active">Basics</a>
+				<a href="#" class="examples">Examples</a>
+			</nav>
+			<div class="tab-content">
+				<div class="product-example home">
+					<h3>Basics</h3>
+					<p>Your browser is: <span class="browser">Unknown</span></p>
+					<p>Your OS is: <span class="os">Unknown</span></p>
+					<p>Installed plugins: 
+						<ul class="plugins">
 
-				</ul>
-			</p>
-			<p>Divx web player version: <span class="player_version">0.0.0</span></p>
-			<p>Is divx web player installed? <span class="player_installed">null</span></p>
-			<p>Check your console for the full object.</p>
+						</ul>
+					</p>
+					<p>Divx web player version: <span class="player_version">0.0.0</span></p>
+					<p>Is divx web player installed? <span class="player_installed">null</span></p>
+					<p>Check your console for the full object.</p>
+				</div>
+				<div class="product-example examples hide">
+					<h3>Downloads for MyApp (<strong>Recommended</strong>)</h3>
+					<ul>
+						<li class="mac"><a href="#">OSX</a></li>
+						<li class="windows"><a href="#">Windows</a></li>
+						<li class="linux"><a href="#">Linux</a></li>
+					</ul>
+					<br />
+					<h3>Welcome to MyWebsite</h3>
+					<p>I see you're using <span class="b ignorecase">Unknown</span>, but this site really runs better using <span>IE4</span>.  Please consider upgrading, thanks!</p>
+				</div>
+			</div>
 		</div>
 	</body>
 </html>
