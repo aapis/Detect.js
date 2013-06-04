@@ -46,7 +46,7 @@ Detect.prototype = {
 		CHROME_WEBKIT: {name: 'chrome', engine: 'webkit', version: '0.0.0'},
 		CHROME_BLINK: {name: 'chrome', engine: 'blink', version: '0.0.0'},
 		FIREFOX: {name: 'firefox', engine: 'gecko', version: '0.0.0'},
-		OPERA_PRESTO: {name: 'opera', engine: 'presto', version: '0.0.0'}, //currently not tested for
+		OPERA_PRESTO: {name: 'opera', engine: 'presto', version: '0.0.0'}, //preliminary support
 		OPERA_BLINK: {name: 'opera', engine: 'blink', version: '0.0.0'}, //currently not tested for
 		SAFARI: {name: 'safari', engine: 'webkit', version: '0.0.0'},
 		IE: {name: 'ie', engine: 'trident', version: '0.0.0'},
@@ -174,7 +174,9 @@ Detect.prototype = {
 		}
 
 		//opera/presto
-		
+		if(/^Opera/.test(this._navParts[0])){
+			output = this._Browsers.OPERA_PRESTO; //preliminary support
+		}
 
 		//opera/blink
 		
@@ -270,7 +272,7 @@ Detect.prototype = {
 
 			//not tested yet
 			case 'linux': 
-				break;
+				output = '64'; break; //currently an assumption
 		}
 
 		return output;
