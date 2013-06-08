@@ -30,7 +30,8 @@ var Detect = function(options){
 
 Detect.prototype = {
 	/**
-	 * Copy of the window.navigator object so we can add/remove things if necessary
+	 * Reference the window.navigator object so we can add/remove things if necessary
+	 *
 	 * @since  1.0.0
 	 * @type {Object}
 	 */
@@ -57,6 +58,7 @@ Detect.prototype = {
 
 	/**
 	 * User's operating system text placeholders
+	 *
 	 * @since  1.0.0
 	 * @type {Object}
 	 */
@@ -70,6 +72,7 @@ Detect.prototype = {
 	/**
 	 * All the functions that return a useful value run a regex statement, so
 	 * lets run it globally once instead of 3 times
+	 *
 	 * @since  1.0.0
 	 * @type {array}
 	 */
@@ -77,6 +80,7 @@ Detect.prototype = {
 
 	/**
 	 * Sets the _Browser and _OS variables
+	 *
 	 * @param {object} options
 	 * @since  1.0.0
 	 * @return {object} [Aggregated data from this.browser, this.os and this.plugins]
@@ -107,6 +111,7 @@ Detect.prototype = {
 
 	/**
 	 * Determine the user's browser
+	 *
 	 * @param {object} options [Any required settings]
 	 * @since  1.0.0
 	 * @return {object}
@@ -189,6 +194,7 @@ Detect.prototype = {
 
 	/**
 	 * Determine the user's operating system
+	 *
 	 * @param {object} options [Any required settings]
 	 * @since  1.0.0
 	 * @return {string}
@@ -217,6 +223,7 @@ Detect.prototype = {
 
 	/**
 	 * Determine what plugins, if any, the browser is running
+	 *
 	 * @param {object} options [Any required settings]
 	 * @since  1.0.0
 	 * @return {object}
@@ -323,6 +330,7 @@ Detect.prototype = {
 
 	/**
 	 * Generate a slug that is easier to remember than the real plugin name
+	 *
 	 * @param  {string} plugin [Plugin name to process]
 	 * @since  1.0.0
 	 * @return {string}
@@ -333,6 +341,7 @@ Detect.prototype = {
 
 	/**
 	 * Sanitize plugin names to remove things like symbols and vesion numbers
+	 * 
 	 * @param  {string} plugin [Plugin name to process]
 	 * @return {string}
 	 */
@@ -347,7 +356,7 @@ Detect.prototype = {
 	 ************************************************************/
 
 	/**
-	 * Tests
+	 * Testing for all possible user agents to ensure accuracy
 	 *
 	 * @since  1.0.0
 	 * @param  {object} context [The Detect object]
@@ -365,7 +374,7 @@ Detect.prototype = {
 	},
 
 	/**
-	 * PluginUtility
+	 * A set of utility plugins for working with installed plugins
 	 * 
 	 * @since  1.0.0
 	 * @param {object} context [The Detect object]
@@ -374,12 +383,14 @@ Detect.prototype = {
 	DJS_PluginUtility: function(context){
 		/**
 		 * Reference to the Detect object
-		 * @type {[type]}
+		 *
+		 * @type {object} The Detect object
 		 */
 		var Detect = context;
 
 		/**
 		 * Determine if a plugin is installed
+		 *
 		 * @param  {string}  plugin_slug [The slug to compare each installed plugin against]
 		 * @since  1.0.0
 		 * @return {Boolean}
@@ -400,6 +411,7 @@ Detect.prototype = {
 
 		/**
 		 * Determine the version of a specified plugin
+		 *
 		 * @param  {string} plugin_slug [The slug to compare each installed plugin against]
 		 * @since  1.0.0
 		 * @return {mixed}
