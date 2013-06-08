@@ -20,10 +20,10 @@ var Detect = function(options){
 
 	//add plugin utility to the global scope
 	if(options.installPluginUtility)
-		window.DJS_PluginUtility = new this.PluginUtility(retVal);
+		window.DJS_PluginUtility = new this.DJS_PluginUtility(retVal);
 
 	if(options.installTests)
-		window.DJS_Tests = new this.Tests(retVal);
+		window.DJS_Tests = new this.DJS_Tests(retVal);
 
 	return retVal;
 }
@@ -260,8 +260,9 @@ Detect.prototype = {
 	 * @return {mixed} [bool|string]
 	 */
 	_bits: function(){
-		var output = '';
-		
+		var knownBits = this._Navigator.platform.toLowerCase().split(' ')[1],
+			output = (/(86|64)/.test(knownBits) ? '64' : '32');
+
 		switch(this._Navigator.platform.toLowerCase().split(' ')[0] || this._navParts[3].toLowerCase()){
 			case 'macintel':
 				output = '64'; break;
@@ -352,7 +353,7 @@ Detect.prototype = {
 	 * @param  {object} context [The Detect object]
 	 * @return {object}
 	 */
-	Tests: function(context){
+	DJS_Tests: function(context){
 		//object of all the browsers we are testing for
 	},
 
@@ -363,7 +364,7 @@ Detect.prototype = {
 	 * @param {object} context [The Detect object]
 	 * @type {Object}
 	 */
-	PluginUtility: function(context){
+	DJS_PluginUtility: function(context){
 		/**
 		 * Reference to the Detect object
 		 * @type {[type]}
