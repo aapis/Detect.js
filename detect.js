@@ -298,9 +298,9 @@ Detect.prototype = {
 			if(ref[prop] && typeof ref[prop] === 'object'){
 				for(var iprop in ref[prop]){
 					if(ref[prop][iprop]){ //ignore undefined or null values
-						if(typeof ref[prop][iprop] === 'string'){ //system, architecture, browser name, browser engine, etc
-							var html_el = document.querySelector('html');
+						var html_el = document.querySelector('html');
 
+						if(typeof ref[prop][iprop] === 'string'){ //system, architecture, browser name, browser engine, etc
 							if(useDefault){
 								html_el.classList.add(iprop +'-'+ ref[prop][iprop].toLowerCase());	
 							}else {
@@ -354,7 +354,14 @@ Detect.prototype = {
 	 * @return {object}
 	 */
 	DJS_Tests: function(context){
-		//object of all the browsers we are testing for
+		//object of all the browser user agents we are testing for
+		var browsers =  [];
+
+		var tests = {
+			//tests to run (each one a function)
+		}
+
+		
 	},
 
 	/**
@@ -398,13 +405,12 @@ Detect.prototype = {
 		 * @return {mixed}
 		 */
 		this.getVersion = function(plugin_slug){
-			if(plugin_slug && typeof Detect.plugins === 'object'){
-				for(var i = 0, plgs = Detect.plugins.content; i < plgs.length; i++){
-					if(plgs[i].slug === plugin_slug){
-						//if there is a version string in either the name or the description, we will use it
-						if(/\d+(\d+)?/g.test(plgs[i].name) || /\d+(\d+)?/g.test(plgs[i].description))
-							return plgs[i].description.match(/\d+(\d+)?/g).join('.');
-					}
+			var pattern = new RegExp("\d+(\d+)?", 'g');
+
+			if(this.isInstalled(plugin_slug)){
+				//if there is a version string in either the name or the description, we will use it
+				if(pattern.test(plgs[i].name) || pattern.test(plgs[i].description)){
+					return plgs[i].description.match(pattern).join('.');
 				}
 			}
 
