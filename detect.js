@@ -20,15 +20,23 @@ var Detect = function(options){
 
 	//add plugin utility to the global scope
 	if(options.installPluginUtility)
-		window.DJS_PluginUtility = new this.DJS_PluginUtility(retVal);
+		window.DJS_PluginUtility = new this.DJS_PluginUtility(this, retVal);
 
 	if(options.installTests)
-		window.DJS_Tests = new this.DJS_Tests(retVal);
+		window.DJS_Tests = new this.DJS_Tests(this, retVal);
 
 	return retVal;
 }
 
 Detect.prototype = {
+	/**
+	 * Static version number
+	 * 
+	 * @since 1.0.0
+	 * @type {Object}
+	 */
+	_Version: '1.0.0',
+
 	/**
 	 * Reference the window.navigator object so we can add/remove things if necessary
 	 *
@@ -351,6 +359,17 @@ Detect.prototype = {
 		return pattern.exec(plugin);
 	},
 
+	/**
+	 * Format a string 
+	 * TODO: more dynamic formatting
+	 * 
+	 * @since 1.0.0
+	 * @return {String}
+	 */
+	sprintf: function(src, repl){
+		return src.replace('%s', repl);
+	},
+
 	/************************************************************
 	 * Utility plugins
 	 ************************************************************/
@@ -380,13 +399,17 @@ Detect.prototype = {
 	 * @param {object} context [The Detect object]
 	 * @type {Object}
 	 */
-	DJS_PluginUtility: function(context){
+	DJS_PluginUtility: function(DetectObj, output){
 		/**
 		 * Reference to the Detect object
 		 *
 		 * @type {object} The Detect object
 		 */
-		var Detect = context;
+		var Detect = output;
+
+		var _Errors = {
+			NOT_FOUND: '%s Not Found',
+		};
 
 		/**
 		 * Determine if a plugin is installed
@@ -426,7 +449,7 @@ Detect.prototype = {
 				}
 			}
 
-			return false;
+			return DetectObj.sprintf(_Errors.NOT_FOUND, 'Plugin');
 		};
 	},
 };
