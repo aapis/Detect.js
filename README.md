@@ -61,4 +61,28 @@ output:
 		<td>Set whether or not to install the plugin utilities functions.</td>
 		<td>true</td>
 	</tr>
+	<tr>
+		<td>installTests</td>
+		<td>bool</td>
+		<td>Flag to install the testing utilities.</td>
+		<td>false</td>
+	</tr>
+	<tr>
+		<td>noPlugins</td>
+		<td>bool</td>
+		<td>Remove plugins from the output object (and don't add those classes to the HTML element).</td>
+		<td>false</td>
+	</tr>
+	<tr>
+		<td>noOS</td>
+		<td>bool</td>
+		<td>Remove OS data from the output object.</td>
+		<td>false</td>
+	</tr>
+	<tr>
+		<td>noBrowser</td>
+		<td>bool</td>
+		<td>Remove browser data from the output object.</td>
+		<td>false</td>
+	</tr>
 </table>
