@@ -33,56 +33,56 @@ output:
 <table>
 	<tr>
 		<th>Key</th>
-		<th>Type</th>
 		<th>Value</th>
+		<th>Type</th>
 		<th>Default</th>
 	</tr>
 	<tr>
 		<td>format</td>
-		<td>bool</td>
 		<td>Format for output in the browser (TRUE) or output to console (FALSE)</td>
+		<td>bool</td>
 		<td>false</td>
 	</tr>
 	<tr>
 		<td>addClasses</td>
+		<td>Add detected browser and system information to the class list of the HTML node.</td>
 		<td>bool</td>
-		<td>Add detected browser and system information to the class list of the body node.</td>
 		<td>true</td>
 	</tr>
 	<tr>
 		<td>classPrefix</td>
-		<td>string</td>
 		<td>Add a prefix to classes on the body node, if the `addClasses` option is set to true.</td>
+		<td>string</td>
 		<td>default</td>
 	</tr>
 	<tr>
 		<td>installPluginUtility</td>
-		<td>bool</td>
 		<td>Set whether or not to install the plugin utilities functions.</td>
+		<td>bool</td>
 		<td>true</td>
 	</tr>
 	<tr>
 		<td>installTests</td>
-		<td>bool</td>
 		<td>Flag to install the testing utilities.</td>
+		<td>bool</td>
 		<td>false</td>
 	</tr>
 	<tr>
 		<td>noPlugins</td>
-		<td>bool</td>
 		<td>Remove plugins from the output object (and don't add those classes to the HTML element).</td>
+		<td>bool</td>
 		<td>false</td>
 	</tr>
 	<tr>
 		<td>noOS</td>
-		<td>bool</td>
 		<td>Remove OS data from the output object.</td>
+		<td>bool</td>
 		<td>false</td>
 	</tr>
 	<tr>
 		<td>noBrowser</td>
-		<td>bool</td>
 		<td>Remove browser data from the output object.</td>
+		<td>bool</td>
 		<td>false</td>
 	</tr>
 </table>
