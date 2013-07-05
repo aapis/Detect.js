@@ -35,7 +35,7 @@ Detect.prototype = {
 	 * @since 1.0.0
 	 * @type {Object}
 	 */
-	_Version: '1.0.0',
+	_Version: '1.1.0',
 
 	/**
 	 * Reference the window.navigator object so we can add/remove things if necessary
@@ -180,6 +180,10 @@ Detect.prototype = {
 			
 			output = this._Browsers.FIREFOX;
 		}
+
+		if(/iPad/.test(this._Navigator.userAgent){
+			output = this._Browsers.IPAD;
+		} 
 
 		//ie/trident
 		if(/^MSIE/.test(this._navParts[2])){
