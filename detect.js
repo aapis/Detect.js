@@ -33,7 +33,7 @@ var Detect = function(options){
 		 * @since 1.0.0
 		 * @type {Object}
 		 */
-		_Version: '1.1.0',
+		_Version: '1.2.0',
 
 		/**
 		 * Reference the window.navigator object so we can add/remove things if necessary
@@ -41,7 +41,7 @@ var Detect = function(options){
 		 * @since  1.0.0
 		 * @type {Object}
 		 */
-		_Navigator: window.navigator,
+		_Navigator: window.navigator || {},
 
 		/**
 		 * Object that contains commonly required strings from the UA
@@ -52,13 +52,13 @@ var Detect = function(options){
 		 * @type {Object}
 		 */
 		_Browsers: {
-			UNKNOWN: {name: 'unknown', engine: 'unknown', version: '0.0.0'},
-			CHROME_BLINK: {name: 'chrome', engine: 'blink', version: '0.0.0'},
-			FIREFOX: {name: 'firefox', engine: 'gecko', version: '0.0.0'},
-			OPERA_PRESTO: {name: 'opera', engine: 'presto', version: '0.0.0'}, //preliminary support
-			OPERA_BLINK: {name: 'opera', engine: 'blink', version: '0.0.0'}, //currently not tested for
-			SAFARI: {name: 'safari', engine: 'webkit', version: '0.0.0'},
-			IE: {name: 'ie', engine: 'trident', version: '0.0.0'},
+			UNKNOWN: {name: 'unknown', engine: 'unknown', version: '0.0.0', short_version: 0},
+			CHROME_BLINK: {name: 'chrome', engine: 'blink', version: '0.0.0', short_version: 0},
+			FIREFOX: {name: 'firefox', engine: 'gecko', version: '0.0.0', short_version: 0},
+			OPERA_PRESTO: {name: 'opera', engine: 'presto', version: '0.0.0', short_version: 0}, //preliminary support
+			OPERA_BLINK: {name: 'opera', engine: 'blink', version: '0.0.0', short_version: 0}, //currently not tested for
+			SAFARI: {name: 'safari', engine: 'webkit', version: '0.0.0', short_version: 0},
+			IE: {name: 'ie', engine: 'trident', version: '0.0.0', short_version: 0},
 		},
 
 		/**
@@ -179,6 +179,8 @@ var Detect = function(options){
 
 			//opera/blink
 			
+			//populate short version property
+			output.short_version = dj_utils.shortVersion(output.version);			
 
 			return output;
 		},
@@ -409,6 +411,16 @@ Detect.Utils = function(output){
 	};
 
 	/**
+	 * Returns the major revision number from the long version string
+	 * @param  {string} longVersion
+	 * @return {number}
+	 */
+	Detect.Utils.prototype.shortVersion = function(longVersion){
+		if(_short = longVersion.split(".")[0])
+			return parseInt(_short);
+	};
+
+	/**
 	 * Format a string 
 	 * TODO: more dynamic formatting
 	 * 
@@ -428,18 +440,11 @@ Detect.Utils = function(output){
  * @return {object}
  */
 Detect.Tests = function(){
-	//object of all the browser user agents we are testing for
-	var browsers =  [];
-
-	var tests = {
+	this.tests = {
 		//tests to run (each one a function)
-	}
-
-}
+	};
+};
 
 	Detect.Tests.prototype.run = function(){
 
 	};
-
-
-
