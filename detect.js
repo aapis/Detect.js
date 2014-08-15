@@ -28,6 +28,109 @@ var Detect = function(options){
 	return retVal;
 }
 
+Detect.Utils = function(){
+	/**
+	 * Reference to the Detect object
+	 *
+	 * @type {object} The Detect object
+	 */
+	this.ref = output;
+
+	/**
+	 * Error strings
+	 * @type {Object}
+	 */
+	this._errors = {
+		NOT_FOUND: '%s Not Found',
+	};
+}
+
+
+// var Detect = output;
+
+// var _Errors = {
+// 	NOT_FOUND: '%s Not Found',
+// };
+
+/**
+ * Determine if a plugin is installed
+ *
+ * @param  {string}  plugin_slug [The slug to compare each installed plugin against]
+ * @since  1.0.0
+ * @return {Boolean}
+ */
+Detect.Utils.prototype.isInstalled = function(plugin_slug){
+	var found = 0;
+
+	if(plugin_slug && typeof this.ref.plugins === 'object'){
+		for(var i = 0, plgs = this.ref.plugins.content; i < plgs.length; i++){
+			if(plugin_slug === plgs[i].slug){
+				found++;
+			}
+		}
+	}
+
+	return (found > 0);
+};
+
+/**
+ * Determine the version of a specified plugin
+ *
+ * @param  {string} plugin_slug [The slug to compare each installed plugin against]
+ * @since  1.0.0
+ * @return {mixed}
+ */
+Detect.Utils.prototype.getVersion = function(plugin_slug){
+	var pattern = new RegExp("\d+(\d+)?", 'g');
+
+	if(this.isInstalled(plugin_slug)){
+		//if there is a version string in either the name or the description, we will use it
+		if(pattern.test(plgs[i].name) || pattern.test(plgs[i].description)){
+			return plgs[i].description.match(pattern).join('.');
+		}
+	}
+
+	return DetectObj.sprintf(this._errors.NOT_FOUND, 'Plugin');
+};
+
+/**
+ * Generate a slug that is easier to remember than the real plugin name
+ *
+ * @param  {string} plugin [Plugin name to process]
+ * @since  1.0.0
+ * @return {string}
+ */
+Detect.Utils.prototype.slug = function(plugin){
+	return plugin.split(' ').join('_').toLowerCase();
+};
+
+/**
+ * Sanitize plugin names to remove things like symbols and vesion numbers
+ * 
+ * @param  {string} plugin [Plugin name to process]
+ * @return {string}
+ */
+Detect.Utils.prototype.sanitize = function(plugin){
+	var pattern = new RegExp('[a-zA-Z-_]+', 'gi');
+	
+	return pattern.exec(plugin);
+};
+
+/**
+ * Format a string 
+ * TODO: more dynamic formatting
+ * 
+ * @since 1.0.0
+ * @return {String}
+ */
+Detect.Utils.prototype.sprintf = function(src, repl){
+	return src.replace('%s', repl);
+};
+
+Detect.Tests = function(){
+
+}
+
 Detect.prototype = {
 	/**
 	 * Static version number
@@ -338,40 +441,6 @@ Detect.prototype = {
 				}
 			}
 		}
-	},
-
-	/**
-	 * Generate a slug that is easier to remember than the real plugin name
-	 *
-	 * @param  {string} plugin [Plugin name to process]
-	 * @since  1.0.0
-	 * @return {string}
-	 */
-	_slug: function(plugin){
-		return plugin.split(' ').join('_').toLowerCase();
-	},
-
-	/**
-	 * Sanitize plugin names to remove things like symbols and vesion numbers
-	 * 
-	 * @param  {string} plugin [Plugin name to process]
-	 * @return {string}
-	 */
-	_sanitize: function(plugin){
-		var pattern = new RegExp('[a-zA-Z-_]+', 'gi');
-		
-		return pattern.exec(plugin);
-	},
-
-	/**
-	 * Format a string 
-	 * TODO: more dynamic formatting
-	 * 
-	 * @since 1.0.0
-	 * @return {String}
-	 */
-	sprintf: function(src, repl){
-		return src.replace('%s', repl);
 	},
 
 	/************************************************************
