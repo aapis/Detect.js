@@ -93,7 +93,7 @@ var Detect = function(options){
 			browser: this.browser(),
 			plugins: this.plugins(options),
 		};
-		console.log(options.ignore);
+		
 		if(options.ignore.plugins)
 			delete output.plugins;
 
@@ -116,7 +116,7 @@ var Detect = function(options){
 	 * @since  1.0.0
 	 * @return {object}
 	 */
-	Detect.prototype.browser = function(options){
+	Detect.prototype.browser = function(){
 		var output = this._Browsers.UNKNOWN,
 			os = this.os().system;
 
@@ -187,7 +187,7 @@ var Detect = function(options){
 	 * @since  1.0.0
 	 * @return {string}
 	 */
-	Detect.prototype.os = function(options){
+	Detect.prototype.os = function(){
 		var output = {system: this._OS.UNKNOWN.name, architecture: this._OS.UNKNOWN.architecture};
 			bits = this.bits();
 
@@ -286,8 +286,7 @@ var Detect = function(options){
 	 * @return {void}
 	 */
 	Detect.prototype.addClasses = function(options, ref){
-		var output = '',
-			useDefault = (options.classPrefix === 'default');
+		var useDefault = (options.classPrefix === 'default');
 
 		for(var prop in ref){
 			if(ref[prop] && typeof ref[prop] === 'object'){
