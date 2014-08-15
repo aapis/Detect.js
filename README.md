@@ -12,9 +12,10 @@ To view the full object, console.log(info)
 output: 
 {
 	browser: {
-		name: 'browserName',
-		engine: 'browserEngine', 
-		version: 'browserVersion',
+		short_version: 'browserShortVersion',
+		name         : 'browserName',
+		engine       : 'browserEngine', 
+		version      : 'browserVersion',
 	},
 	
 	os: {
@@ -56,33 +57,9 @@ output:
 		<td>default</td>
 	</tr>
 	<tr>
-		<td>installPluginUtility</td>
-		<td>Set whether or not to install the plugin utilities functions.</td>
-		<td>bool</td>
-		<td>true</td>
-	</tr>
-	<tr>
-		<td>installTests</td>
-		<td>Flag to install the testing utilities.</td>
-		<td>bool</td>
-		<td>false</td>
-	</tr>
-	<tr>
-		<td>noPlugins</td>
-		<td>Remove plugins from the output object (and don't add those classes to the HTML element).</td>
-		<td>bool</td>
-		<td>false</td>
-	</tr>
-	<tr>
-		<td>noOS</td>
-		<td>Remove OS data from the output object.</td>
-		<td>bool</td>
-		<td>false</td>
-	</tr>
-	<tr>
-		<td>noBrowser</td>
-		<td>Remove browser data from the output object.</td>
-		<td>bool</td>
-		<td>false</td>
+		<td>ignore</td>
+		<td>(plugins|os|browser) - Remove the respective element from the output.</td>
+		<td>object</td>
+		<td>N/A</td>
 	</tr>
 </table>
