@@ -19,6 +19,9 @@ var Detect = function(options){
 	//instantiate utility object
 	this.utils = new Detect.Utils(this);
 
+	//expose utilities publically
+	window.dj_utils = this.utils;
+
 	return this.do(options);
 };
 
