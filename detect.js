@@ -319,7 +319,7 @@ var Detect = function(options){
 /**
  * A set of utility plugins for working with installed plugins
  * 
- * @since  1.0.0
+ * @since  1.2.0
  * @param {object} context [The Detect object]
  * @type {Object}
  */
@@ -396,6 +396,7 @@ Detect.Utils = function(output){
 	 * Sanitize plugin names to remove things like symbols and vesion numbers
 	 * 
 	 * @param  {string} plugin [Plugin name to process]
+	 * @since  1.0.0
 	 * @return {string}
 	 */
 	Detect.Utils.prototype.sanitize = function(plugin){
@@ -406,7 +407,9 @@ Detect.Utils = function(output){
 
 	/**
 	 * Returns the major revision number from the long version string
+	 * 
 	 * @param  {string} longVersion
+	 * @since  1.2.0
 	 * @return {number}
 	 */
 	Detect.Utils.prototype.shortVersion = function(longVersion){
@@ -430,7 +433,7 @@ Detect.Utils = function(output){
  * Testing for all possible user agents to ensure accuracy.  For development
  * purposes only!
  *
- * @since  1.0.0
+ * @since  1.2.0
  * @param  {object} context [The Detect object]
  * @return {object}
  */
