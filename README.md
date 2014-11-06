@@ -19,7 +19,7 @@ output:
 	},
 	
 	os: {
-		bits: 'systemBits',
+		architecture: 'systemBits',
 		system: 'systemName',
 	},
 

@@ -5,15 +5,15 @@
  * @since  1.0.0
  * @type {Object}
  */
-var Detect = function(options){
+var Detect = function(config){
 	//set options to either a default or the chosen value
-	options = options || {};
-	options.add_classes = !!options.add_classes;
+	options = config || {};
+	options.add_classes = !!config.add_classes;
 	options.ignore = {
-		plugins: !!options.ignore.plugins,
-		os: !!options.ignore.os,
-		browser: !!options.ignore.browser,
-		supports: !!options.ignore.supports,
+		plugins: !!config.ignore.plugins,
+		os: !!config.ignore.os,
+		browser: !!config.ignore.browser,
+		supports: !!config.ignore.supports,
 	};
 	
 	//instantiate utility object
