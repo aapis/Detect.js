@@ -1,7 +1,6 @@
 /**
  * Detect - Get data from the browser, format it, profit
  *
- * TODO: too many fuckin option objects here
  * @since  1.0.0
  * @type {Object}
  */
@@ -22,7 +21,7 @@ var Detect = function(config){
 	//expose utilities publically
 	window.dj_utils = this.utils;
 
-	return this.do(options);
+	return this.generate_output(options);
 };
 
 	/**
@@ -40,7 +39,7 @@ var Detect = function(config){
 	 * @since  1.0.0
 	 * @return {object} Aggregated data object
 	 */
-	Detect.prototype.do = function(options){
+	Detect.prototype.generate_output = function(options){
 		this.output = {};
 		
 		//if(false === options.ignore.plugins)
