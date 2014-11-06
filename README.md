@@ -39,20 +39,14 @@ output:
 		<th>Default</th>
 	</tr>
 	<tr>
-		<td>addClasses</td>
+		<td>add_classes</td>
 		<td>Add detected browser and system information to the class list of the HTML node.</td>
 		<td>bool</td>
 		<td>true</td>
 	</tr>
 	<tr>
-		<td>classPrefix</td>
-		<td>Add a prefix to classes on the body node, if the `addClasses` option is set to true.</td>
-		<td>string</td>
-		<td>default</td>
-	</tr>
-	<tr>
 		<td>ignore</td>
-		<td>(plugins|os|browser) - Remove the respective element from the output.</td>
+		<td>(plugins|os|browser|supports) - Remove the respective element from the output.</td>
 		<td>object</td>
 		<td>N/A</td>
 	</tr>

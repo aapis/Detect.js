@@ -8,7 +8,7 @@
 var Detect = function(options){
 	//set options to either a default or the chosen value
 	options = options || {};
-	options.addClasses = !!options.addClasses;
+	options.add_classes = !!options.add_classes;
 	options.ignore = {
 		plugins: !!options.ignore.plugins,
 		os: !!options.ignore.os,
@@ -55,7 +55,7 @@ var Detect = function(options){
 		if(false === options.ignore.supports)
 			this.output.supports = new Detect.Supports();
 
-		if(options.addClasses)
+		if(options.add_classes)
 			this.add_classes();
 		
 		return this.output;
@@ -435,7 +435,20 @@ var Detect = function(options){
 	 * @since 1.3.0
 	 */
 	Detect.Supports = function(){
-		
+		var _libs = [
+			"indexedDB", 
+			"WebSocket", 
+			"localStorage", 
+			"classList", 
+			"addEventListener", 
+			"querySelector",
+		];
+
+		for(var lib in _libs){
+			this[_libs[lib]] = (!!window[_libs[lib]] || !!document.body[_libs[lib]]);
+		}
+
+		return this;
 	};
 
 	/**
