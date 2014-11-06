@@ -59,22 +59,20 @@ var Detect = function(options){
 	 */
 	Detect.prototype.do = function(options){
 		this._navParts = this._Navigator.userAgent.split(/\s*[;)(]\s*/);
-		var user_os = new Detect.OS(this); //temp
-		var output = {
-			os: user_os,//this.os(),
-			browser: new Detect.Browser(user_os),//this.browser(),
-			plugins: new Detect.Plugins(options),//this.plugins(options),
-			supports: new Detect.Supports(),//this.supports(),
-		};
+
+		var output = {};
 		
-		if(options.ignore.plugins)
-			delete output.plugins;
+		if(false === options.ignore.plugins)
+			output.plugins = new Detect.Plugins(options);
 
-		if(options.ignore.os)
-			delete output.os;
+		if(false === options.ignore.os)
+			output.os = new Detect.OS(this);
 
-		if(options.ignore.browser)
-			delete output.browser;
+		if(false === options.ignore.browser)
+			output.browser = new Detect.Browser();
+
+		if(false === options.ignore.supports)
+			output.supports = new Detect.Supports();
 
 		// if(options.addClasses)
 		// 	this.addClasses(options, output);
@@ -201,11 +199,9 @@ var Detect = function(options){
 	/**
 	 * Determine the user's browser by matching various identifying properties
 	 * against known values 
-	 * 
-	 * @param {object} os User's operating system
 	 */
-	Detect.Browser = function(os){
-		return this.parse_browser_info(os);
+	Detect.Browser = function(){
+		return this.parse_browser_info();
 	};
 
 		/**
@@ -354,7 +350,7 @@ var Detect = function(options){
 		 * @since  1.3.0
 		 * @return {object}
 		 */
-		Detect.Browser.prototype.parse_browser_info = function(os){
+		Detect.Browser.prototype.parse_browser_info = function(){
 			var output = new this.Unknown();
 
 			//safari/webkit
@@ -367,7 +363,6 @@ var Detect = function(options){
 
 			//chrome/blink
 			if(/Chrome/.test(window.navigator.userAgent) && /AppleWebKit/.test(window.navigator.userAgent)){
-				//this.constants.CHROME_BLINK.version = this._navParts[5].substring(7, 19);
 				var Chrome = new this.Chrome();
 					Chrome.setVersion();
 
@@ -397,7 +392,7 @@ var Detect = function(options){
 				output = InternetExplorer;
 			}
 
-			//opera/presto
+			//opera
 			if(/Opera/.test(window.navigator.userAgent)){
 				var Opera = new this.Opera();
 					Opera.setVersion();
@@ -405,8 +400,6 @@ var Detect = function(options){
 				output = Opera; //preliminary support
 			}
 
-			//opera/blink
-			
 			//populate short version property
 			//output.short_version = this.utils.shortVersion(output.version);			
 
