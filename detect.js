@@ -240,7 +240,7 @@ var Detect = function(options){
 				}else {
 					//determine version dynamically
 					var _ua = window.navigator.userAgent,
-						_ver = _ua.match(/MSIE\/[0-9-.]+/);
+						_ver = _ua.match(/rv\:[0-9-.]+/);
 
 					this.version = _ver[0].match(/[0-9-.]+/)[0];
 				}
@@ -293,8 +293,8 @@ var Detect = function(options){
 				output = MobileSafari;
 			} 
 
-			//ie/trident
-			if(/MSIE/.test(window.navigator.userAgent)){
+			//ie
+			if(/Trident/.test(window.navigator.userAgent)){
 				var InternetExplorer = new this.InternetExplorer();
 					InternetExplorer.setVersion();
 
@@ -395,13 +395,12 @@ var Detect = function(options){
 				case 'macppc':
 					output = '32'; break;
 
-				//not tested yet
 				case 'win32': 
-					output = (window.navigator.match(/wow64/i) ? '64' : '32'); break;
+					output = (window.navigator.userAgent.match(/wow64/i) ? '64' : '32'); break;
 
 				//not tested yet
 				case 'linux': 
-					output = '64'; break; //currently an assumption
+					output = '64'; break;
 			}
 
 			return output;
