@@ -1,6 +1,7 @@
 /**
  * Detect - Get data from the browser, format it, profit
  *
+ * TODO: too many fuckin option objects here
  * @since  1.0.0
  * @type {Object}
  */
@@ -32,24 +33,7 @@ var Detect = function(options){
 	 * @type {Object}
 	 */
 	Detect.prototype._Version = '1.2.0';
-
-	/**
-	 * Reference the window.navigator object so we can add/remove things if necessary
-	 *
-	 * @since  1.0.0
-	 * @type {Object}
-	 */
-	Detect.prototype._Navigator = window.navigator || {};
-
-	/**
-	 * All the functions that return a useful value run a regex statement, so
-	 * lets run it globally once instead of 3 times
-	 *
-	 * @since  1.0.0
-	 * @type {array}
-	 */
-	Detect.prototype._navParts = [];
-
+	
 	/**
 	 * Sets the _Browser and _OS variables
 	 *
@@ -58,8 +42,6 @@ var Detect = function(options){
 	 * @return {object} [Aggregated data from this.browser, this.os and this.plugins]
 	 */
 	Detect.prototype.do = function(options){
-		this._navParts = this._Navigator.userAgent.split(/\s*[;)(]\s*/);
-
 		var output = {};
 		
 		if(false === options.ignore.plugins)
@@ -80,42 +62,7 @@ var Detect = function(options){
 		return output;
 	};
 
-	/**
-	 * Determine what plugins, if any, the browser is running
-	 *
-	 * @param {object} options [Any required settings]
-	 * @since  1.0.0
-	 * @return {object}
-	 */
-	Detect.prototype.plugins = function(options){
-		var output = {};
-
-		if(this._Navigator.plugins && this._Navigator.plugins.length > 1){
-			output.content = [];
-
-			if(options.format){
-				//HTML
-				for(var i = 0; i < this._Navigator.plugins.length; i++){
-					var plugin = this._Navigator.plugins[i];
-
-					if(plugin.name)
-						output.content.push('<li>Name: <strong>'+ plugin.name +'</strong></li>');
-					if(plugin.description)
-						output.content.push('<li>Description: <strong>'+ plugin.description +'</strong></li>');
-				}
-				output = output.content.join(' ');
-			}else {
-				//object
-				for(var i = 0; i < this._Navigator.plugins.length; i++){
-					var plugin = this._Navigator.plugins[i];
-
-					output.content.push({name: plugin.name, description: plugin.description, slug: this.utils.slug(plugin.name)});
-				}
-			}
-		}
-		
-		return output;
-	};
+	
 
 	/**
 	 * Add classes to the body element if options.addBodyClasses is true
@@ -437,8 +384,8 @@ var Detect = function(options){
 
 		/**
 		 * Determine the CPU architecture - 32 or 64
-		 * Note: some browsers don't broadcast the system architecture 
-		 * so this will make it's best guess
+		 * Note: some browsers don't broadcast the system architecture so this 
+		 * will make it's best guess
 		 * 
 		 * @since  1.0.0
 		 * @return {mixed} [bool|string]
@@ -467,141 +414,155 @@ var Detect = function(options){
 			return output;
 		};
 
-	Detect.Plugins = function(){
+	/**
+	 * Determine what plugins, if any, the browser is running
+	 *
+	 * @param {object} options [Any required settings]
+	 * @since  1.0.0
+	 * @return {object}
+	 */
+	Detect.Plugins = function(options){
+		var output = {};
+
+		if(window.navigator.plugins && window.navigator.plugins.length > 1){
+			output.content = [];
+
+			if(options.format){
+				//HTML
+				for(var i = 0; i < window.navigator.length; i++){
+					var plugin = window.navigator.plugins[i];
+
+					if(plugin.name)
+						output.content.push('<li>Name: <strong>'+ plugin.name +'</strong></li>');
+					if(plugin.description)
+						output.content.push('<li>Description: <strong>'+ plugin.description +'</strong></li>');
+				}
+				output = output.content.join(' ');
+			}else {
+				//object
+				for(var i = 0; i < window.navigator.plugins.length; i++){
+					var plugin = window.navigator.plugins[i];
+
+					output.content.push({name: plugin.name, description: plugin.description, slug: this.utils.slug(plugin.name)});
+				}
+			}
+		}
 		
+		return output;
 	};
 
 	Detect.Supports = function(){
 		
 	};
 
-/**
- * A set of utility plugins for working with installed plugins
- * 
- * @since  1.2.0
- * @param {object} context [The Detect object]
- * @type {Object}
- */
-Detect.Utils = function(output){
 	/**
-	 * Reference to the Detect object
-	 *
-	 * @type {object} The Detect object
-	 */
-	this.ref = output;
-
-	/**
-	 * Error strings
+	 * A set of utility plugins for working with installed plugins
+	 * 
+	 * @since  1.2.0
+	 * @param {object} context [The Detect object]
 	 * @type {Object}
 	 */
-	this._errors = {
-		NOT_FOUND: '%s Not Found',
-	};
-}
+	Detect.Utils = function(output){
+		/**
+		 * Reference to the Detect object
+		 *
+		 * @type {object} The Detect object
+		 */
+		this.ref = output;
 
-	/**
-	 * Determine if a plugin is installed
-	 *
-	 * @param  {string}  plugin_slug [The slug to compare each installed plugin against]
-	 * @since  1.0.0
-	 * @return {Boolean}
-	 */
-	Detect.Utils.prototype.isInstalled = function(plugin_slug){
-		var found = 0;
+		/**
+		 * Error strings
+		 * @type {Object}
+		 */
+		this._errors = {
+			NOT_FOUND: '%s Not Found',
+		};
+	}
 
-		if(plugin_slug && typeof this.ref.plugins === 'object'){
-			for(var i = 0, plgs = this.ref.plugins.content; i < plgs.length; i++){
-				if(plugin_slug === plgs[i].slug){
-					found++;
+		/**
+		 * Determine if a plugin is installed
+		 *
+		 * @param  {string}  plugin_slug [The slug to compare each installed plugin against]
+		 * @since  1.0.0
+		 * @return {Boolean}
+		 */
+		Detect.Utils.prototype.isInstalled = function(plugin_slug){
+			var found = 0;
+
+			if(plugin_slug && typeof this.ref.plugins === 'object'){
+				for(var i = 0, plgs = this.ref.plugins.content; i < plgs.length; i++){
+					if(plugin_slug === plgs[i].slug){
+						found++;
+					}
 				}
 			}
-		}
 
-		return (found > 0);
-	};
+			return (found > 0);
+		};
 
-	/**
-	 * Determine the version of a specified plugin
-	 *
-	 * @param  {string} plugin_slug [The slug to compare each installed plugin against]
-	 * @since  1.0.0
-	 * @return {mixed}
-	 */
-	Detect.Utils.prototype.getVersion = function(plugin_slug){
-		var pattern = new RegExp("\d+(\d+)?", 'g');
+		/**
+		 * Determine the version of a specified plugin
+		 *
+		 * @param  {string} plugin_slug [The slug to compare each installed plugin against]
+		 * @since  1.0.0
+		 * @return {mixed}
+		 */
+		Detect.Utils.prototype.getVersion = function(plugin_slug){
+			var pattern = new RegExp("\d+(\d+)?", 'g');
 
-		if(this.isInstalled(plugin_slug)){
-			//if there is a version string in either the name or the description, we will use it
-			if(pattern.test(plgs[i].name) || pattern.test(plgs[i].description)){
-				return plgs[i].description.match(pattern).join('.');
+			if(this.isInstalled(plugin_slug)){
+				//if there is a version string in either the name or the description, we will use it
+				if(pattern.test(plgs[i].name) || pattern.test(plgs[i].description)){
+					return plgs[i].description.match(pattern).join('.');
+				}
 			}
-		}
 
-		return this.sprintf(this._errors.NOT_FOUND, 'Plugin');
-	};
+			return this.sprintf(this._errors.NOT_FOUND, 'Plugin');
+		};
 
-	/**
-	 * Generate a slug that is easier to remember than the real plugin name
-	 *
-	 * @param  {string} plugin [Plugin name to process]
-	 * @since  1.0.0
-	 * @return {string}
-	 */
-	Detect.Utils.prototype.slug = function(plugin){
-		return plugin.split(' ').join('_').toLowerCase();
-	};
+		/**
+		 * Generate a slug that is easier to remember than the real plugin name
+		 *
+		 * @param  {string} plugin [Plugin name to process]
+		 * @since  1.0.0
+		 * @return {string}
+		 */
+		Detect.Utils.prototype.slug = function(plugin){
+			return plugin.split(' ').join('_').toLowerCase();
+		};
 
-	/**
-	 * Sanitize plugin names to remove things like symbols and vesion numbers
-	 * 
-	 * @param  {string} plugin [Plugin name to process]
-	 * @since  1.0.0
-	 * @return {string}
-	 */
-	Detect.Utils.prototype.sanitize = function(plugin){
-		var pattern = new RegExp('[a-zA-Z-_]+', 'gi');
-		
-		return pattern.exec(plugin);
-	};
+		/**
+		 * Sanitize plugin names to remove things like symbols and vesion numbers
+		 * 
+		 * @param  {string} plugin [Plugin name to process]
+		 * @since  1.0.0
+		 * @return {string}
+		 */
+		Detect.Utils.prototype.sanitize = function(plugin){
+			var pattern = new RegExp('[a-zA-Z-_]+', 'gi');
+			
+			return pattern.exec(plugin);
+		};
 
-	/**
-	 * Returns the major revision number from the long version string
-	 * 
-	 * @param  {string} longVersion
-	 * @since  1.2.0
-	 * @return {number}
-	 */
-	Detect.Utils.prototype.shortVersion = function(longVersion){
-		if(_short = longVersion.split(".")[0])
-			return parseInt(_short);
-	};
+		/**
+		 * Returns the major revision number from the long version string
+		 * 
+		 * @param  {string} longVersion
+		 * @since  1.2.0
+		 * @return {number}
+		 */
+		Detect.Utils.prototype.shortVersion = function(longVersion){
+			if(_short = longVersion.split(".")[0])
+				return parseInt(_short);
+		};
 
-	/**
-	 * Format a string 
-	 * TODO: more dynamic formatting
-	 * 
-	 * @since 1.0.0
-	 * @return {String}
-	 */
-	Detect.Utils.prototype.sprintf = function(src, repl){
-		return src.replace('%s', repl);
-	};
-
-
-/**
- * Testing for all possible user agents to ensure accuracy.  For development
- * purposes only!
- *
- * @since  1.2.0
- * @param  {object} context [The Detect object]
- * @return {object}
- */
-Detect.Tests = function(){
-	this.tests = {
-		//tests to run (each one a function)
-	};
-};
-
-	Detect.Tests.prototype.run = function(){
-
-	};
+		/**
+		 * Format a string 
+		 * TODO: more dynamic formatting
+		 * 
+		 * @since 1.0.0
+		 * @return {String}
+		 */
+		Detect.Utils.prototype.sprintf = function(src, repl){
+			return src.replace('%s', repl);
+		};
