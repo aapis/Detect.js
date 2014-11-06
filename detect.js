@@ -41,20 +41,6 @@ var Detect = function(options){
 	 */
 	Detect.prototype._Navigator = window.navigator || {};
 
-	
-	/**
-	 * User's operating system text placeholders
-	 *
-	 * @since  1.0.0
-	 * @type {Object}
-	 */
-	Detect.prototype._OS = {
-		UNKNOWN: {name: 'Unknown', architecture: '32'},
-		MAC: {name: 'Mac', architecture: '32'},
-		WINDOWS: {name: 'Windows', architecture: '32'},
-		LINUX: {name: 'Linux', architecture: '32'},
-	};
-
 	/**
 	 * All the functions that return a useful value run a regex statement, so
 	 * lets run it globally once instead of 3 times
@@ -73,10 +59,10 @@ var Detect = function(options){
 	 */
 	Detect.prototype.do = function(options){
 		this._navParts = this._Navigator.userAgent.split(/\s*[;)(]\s*/);
-
+		var user_os = new Detect.OS(this); //temp
 		var output = {
-			os: new Detect.OS(),//this.os(),
-			browser: new Detect.Browser(this),//this.browser(),
+			os: user_os,//this.os(),
+			browser: new Detect.Browser(this, user_os),//this.browser(),
 			plugins: new Detect.Plugins(options),//this.plugins(options),
 			supports: new Detect.Supports(),//this.supports(),
 		};
@@ -93,37 +79,6 @@ var Detect = function(options){
 		if(options.addClasses)
 			this.addClasses(options, output);
 		
-		return output;
-	};
-
-	
-
-	/**
-	 * Determine the user's operating system
-	 *
-	 * @param {object} options [Any required settings]
-	 * @since  1.0.0
-	 * @return {string}
-	 */
-	Detect.prototype.os = function(){
-		var output = {system: this._OS.UNKNOWN.name, architecture: this._OS.UNKNOWN.architecture};
-			bits = this.bits();
-
-		switch(this._Navigator.platform.toLowerCase().split(' ')[0] || this._navParts[3].toLowerCase()){
-			case 'macintel':
-			case 'macppc':
-				output.system = this._OS.MAC.name;
-				output.architecture = (bits ? bits : this._OS.MAC.bits); break;
-
-			case 'win32':
-				output.system = this._OS.WINDOWS.name;
-				output.architecture = (bits ? bits : this._OS.WINDOWS.bits); break;
-
-			case 'linux':
-				output.system = this._OS.LINUX.name;
-				output.architecture = (bits ? bits : this._OS.LINUX.bits); break;
-		}
-
 		return output;
 	};
 
@@ -243,8 +198,8 @@ var Detect = function(options){
 		return {};
 	};
 
-	Detect.Browser = function(){
-		return this.get();
+	Detect.Browser = function(parent, os){
+		return this.parse_browser_info(parent, os);
 	};
 
 	/**
@@ -252,7 +207,7 @@ var Detect = function(options){
 	 * NOTE: accessing directly will give you incorrect data, use Detect.browser() 
 	 * to access this data instead
 	 * 
-	 * @since 1.0.0
+	 * @since 1.3.0
 	 * @type {Object}
 	 */
 	Detect.Browser.prototype.constants = {
@@ -269,17 +224,16 @@ var Detect = function(options){
 	 * Determine the user's browser
 	 *
 	 * @param {object} options [Any required settings]
-	 * @since  1.0.0
+	 * @since  1.3.0
 	 * @return {object}
 	 */
-	Detect.Browser.prototype.get = function(){
-		var output = this.constants.UNKNOWN,
-			os = {};//this.os().system;
+	Detect.Browser.prototype.parse_browser_info = function(parent, os){
+		var output = this.constants.UNKNOWN;
 
 		//safari/webkit
-		if(/^Version/.test(this._navParts[5]) && /Safari/.test(this._navParts[5])){
-			switch(os){
-				case this._OS.MAC.system:
+		if(/^Version/.test(parent._Navigator.userAgent) && /Safari/.test(parent._Navigator.userAgent)){
+			switch(os.system){
+				case os.constants.MAC.system:
 					this.constants.SAFARI.version = this._navParts[5].split(' ')[0].substring(8); break;
 
 				default:
@@ -292,31 +246,31 @@ var Detect = function(options){
 
 
 		//chrome/blink
-		if(/^Chrome/.test(this._navParts[5]) && /^AppleWebKit/.test(this._navParts[3])){
+		if(/^Chrome/.test(parent._Navigator.userAgent) && /^AppleWebKit/.test(parent._Navigator.userAgent)){
 			this.constants.CHROME_BLINK.version = this._navParts[5].substring(7, 19);
 
 			output = this.constants.CHROME_BLINK;
 		}
 
 		//firefox/gecko
-		if(/^(Gecko|Firefox)/.test(this._navParts[4]) || /^(Gecko|Firefox)/.test(this._navParts[5])){ //Linux UA has 6, Windows has 5
+		if(/^(Gecko|Firefox)/.test(parent._Navigator.userAgent)){
 			switch(os){
-				case this._OS.LINUX.system:
+				case os.constants.LINUX.system:
 					this.constants.FIREFOX.version = this._navParts[5].split(' ')[1].substring(8); break;
 
-				case this._OS.WINDOWS.system:
+				case os.constants.WINDOWS.system:
 					this.constants.FIREFOX.version = this._navParts[4].split(' ')[1].substring(8); break;
 			}
 			
 			output = this.constants.FIREFOX;
 		}
 
-		if(/iPad/.test(this._Navigator.userAgent)){
+		if(/iPad/.test(parent._Navigator.userAgent)){
 			output = this.constants.IPAD;
 		} 
 
 		//ie/trident
-		if(/^MSIE/.test(this._navParts[2])){
+		if(/^MSIE/.test(parent._Navigator.userAgent)){
 			this.constants.IE.engine = this._navParts[5].split('/')[0]; //we can get a little more specific here, so why not
 			this.constants.IE.version = this._navParts[5].split('/')[1];
 
@@ -324,21 +278,73 @@ var Detect = function(options){
 		}
 
 		//opera/presto
-		if(/^Opera/.test(this._navParts[0])){
+		if(/^Opera/.test(parent._Navigator.userAgent)){
 			output = this.constants.OPERA_PRESTO; //preliminary support
 		}
 
 		//opera/blink
 		
 		//populate short version property
-		output.short_version = this.utils.shortVersion(output.version);			
+		//output.short_version = this.utils.shortVersion(output.version);			
 
 		return output;
 	};
 
-Detect.OS = function(){
-	
+Detect.OS = function(parent){
+	return this.parse_os_info(parent);
 };
+
+	/**
+	 * User's operating system text placeholders
+	 *
+	 * @since  1.3.0
+	 * @type {Object}
+	 */
+	Detect.OS.prototype.UNKNOWN = function(){
+		this.name = "UNKNOWN";
+		this.architecture = 32;
+	};
+
+	Detect.OS.prototype.MAC = function(){
+		this.name = "Mac";
+		this.architecture = 32;
+	};
+
+	Detect.OS.prototype.WINDOWS = function(){
+		this.name = "Windows";
+		this.architecture = 32;
+	};
+
+	Detect.OS.prototype.LINUX = function(){
+		this.name = "Linux";
+		this.architecture = 32;
+	};
+
+	/**
+	 * Determine the user's operating system
+	 *
+	 * @param {object} options [Any required settings]
+	 * @since  1.0.0
+	 * @return {string}
+	 */
+	Detect.OS.prototype.parse_os_info = function(parent){
+		var output = new this.UNKNOWN();
+			bits = parent.bits();
+			
+		switch(parent._Navigator.platform.toLowerCase().split(' ')[0]){
+			case 'macintel':
+			case 'macppc':
+				output = new this.MAC(); break;
+
+			case 'win32':
+				output = new this.WINDOWS(); break;
+
+			case 'linux':
+				output = new this.LINUX(); break;
+		}
+
+		return output;
+	};
 
 Detect.Plugins = function(){
 	
