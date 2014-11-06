@@ -47,10 +47,10 @@ var Detect = function(config){
 			this.output.plugins = new Detect.Plugins(this.utils);
 
 		if(false === options.ignore.os)
-			this.output.os = new Detect.OS(this);
+			this.output.os = new Detect.OS();
 
 		if(false === options.ignore.browser)
-			this.output.browser = new Detect.Browser();
+			this.output.browser = new Detect.Browser(this.utils);
 
 		if(false === options.ignore.supports)
 			this.output.supports = new Detect.Supports();
@@ -96,21 +96,11 @@ var Detect = function(config){
 	}
 
 	/**
-	 * Detect support for common web technologies like websockets and indexedDB
-	 * 
-	 * @since  1.3.0
-	 * @return {object}
-	 */
-	Detect.prototype.supports = function(){
-		return {};
-	};
-
-	/**
 	 * Determine the user's browser by matching various identifying properties
 	 * against known values 
 	 */
-	Detect.Browser = function(){
-		return this.parse_browser_info();
+	Detect.Browser = function(utils){
+		return this.parse_browser_info(utils);
 	};
 
 		/**
@@ -125,12 +115,12 @@ var Detect = function(config){
 			this.short_version = 0;
 		};
 
-			Detect.Browser.prototype.Unknown.prototype.setVersion = function(version){
+			Detect.Browser.prototype.Unknown.prototype.set_version = function(version){
 				if(version)
 					this.version = version; //format into long version
 			};
 
-			Detect.Browser.prototype.Unknown.prototype.setEngine = function(engine){
+			Detect.Browser.prototype.Unknown.prototype.set_engine = function(engine){
 				if(engine)
 					this.engine = engine;
 			};
@@ -147,7 +137,7 @@ var Detect = function(config){
 			this.short_version = 0;
 		};
 
-			Detect.Browser.prototype.Safari.prototype.setVersion = function(version){
+			Detect.Browser.prototype.Safari.prototype.set_version = function(version){
 				if(version){
 					this.version = version; //format into long version
 				}else {
@@ -159,7 +149,7 @@ var Detect = function(config){
 				}
 			};
 
-			Detect.Browser.prototype.Safari.prototype.setEngine = function(engine){
+			Detect.Browser.prototype.Safari.prototype.set_engine = function(engine){
 				if(engine)
 					this.engine = engine;
 			};
@@ -176,7 +166,7 @@ var Detect = function(config){
 			this.short_version = 0;
 		};
 
-			Detect.Browser.prototype.Chrome.prototype.setVersion = function(version){
+			Detect.Browser.prototype.Chrome.prototype.set_version = function(version){
 				if(version){
 					this.version = version; //format into long version
 				}else {
@@ -188,7 +178,7 @@ var Detect = function(config){
 				}
 			};
 
-			Detect.Browser.prototype.Chrome.prototype.setEngine = function(engine){
+			Detect.Browser.prototype.Chrome.prototype.set_engine = function(engine){
 				if(engine)
 					this.engine = engine;
 			};
@@ -205,7 +195,7 @@ var Detect = function(config){
 			this.short_version = 0;
 		};
 
-			Detect.Browser.prototype.Firefox.prototype.setVersion = function(version){
+			Detect.Browser.prototype.Firefox.prototype.set_version = function(version){
 				if(version){
 					this.version = version; //format into long version
 				}else {
@@ -217,7 +207,7 @@ var Detect = function(config){
 				}
 			};
 
-			Detect.Browser.prototype.Firefox.prototype.setEngine = function(engine){
+			Detect.Browser.prototype.Firefox.prototype.set_engine = function(engine){
 				if(engine)
 					this.engine = engine;
 			};
@@ -234,7 +224,7 @@ var Detect = function(config){
 			this.short_version = 0;
 		};
 
-			Detect.Browser.prototype.InternetExplorer.prototype.setVersion = function(version){
+			Detect.Browser.prototype.InternetExplorer.prototype.set_version = function(version){
 				if(version){
 					this.version = version; //format into long version
 				}else {
@@ -246,7 +236,7 @@ var Detect = function(config){
 				}
 			};
 
-			Detect.Browser.prototype.InternetExplorer.prototype.setEngine = function(engine){
+			Detect.Browser.prototype.InternetExplorer.prototype.set_engine = function(engine){
 				if(engine)
 					this.engine = engine;
 			};
@@ -259,13 +249,13 @@ var Detect = function(config){
 		 * @since  1.3.0
 		 * @return {object}
 		 */
-		Detect.Browser.prototype.parse_browser_info = function(){
+		Detect.Browser.prototype.parse_browser_info = function(utils){
 			var output = new this.Unknown();
 
 			//safari/webkit
 			if(/Version/.test(window.navigator.userAgent) && /Safari/.test(window.navigator.userAgent)){
 				var Safari = new this.Safari();
-					Safari.setVersion();
+					Safari.set_version();
 
 				output = Safari;
 			}
@@ -273,7 +263,7 @@ var Detect = function(config){
 			//chrome/blink
 			if(/Chrome/.test(window.navigator.userAgent) && /AppleWebKit/.test(window.navigator.userAgent)){
 				var Chrome = new this.Chrome();
-					Chrome.setVersion();
+					Chrome.set_version();
 
 				output = Chrome;
 			}
@@ -281,14 +271,14 @@ var Detect = function(config){
 			//firefox/gecko
 			if(/(Firefox)/.test(window.navigator.userAgent)){
 				var Firefox = new this.Firefox();
-					Firefox.setVersion();
+					Firefox.set_version();
 				
 				output = Firefox;
 			}
 
 			if(/iPad/.test(window.navigator.userAgent)){
 				var MobileSafari = new this.MobileSafari();
-					MobileSafari.setVersion();
+					MobileSafari.set_version();
 
 				output = MobileSafari;
 			} 
@@ -296,7 +286,7 @@ var Detect = function(config){
 			//ie
 			if(/Trident/.test(window.navigator.userAgent)){
 				var InternetExplorer = new this.InternetExplorer();
-					InternetExplorer.setVersion();
+					InternetExplorer.set_version();
 
 				output = InternetExplorer;
 			}
@@ -304,23 +294,22 @@ var Detect = function(config){
 			//opera
 			if(/Opera/.test(window.navigator.userAgent)){
 				var Opera = new this.Opera();
-					Opera.setVersion();
+					Opera.set_version();
 
 				output = Opera; //preliminary support
 			}
 
 			//populate short version property
-			//output.short_version = this.utils.shortVersion(output.version);			
+			output.short_version = utils.short_version(output.version);			
 
 			return output;
 		};
 
 	/**
-	 * [OS description]
-	 * @param {[type]} parent [description]
+	 * Determine the user's operating system and system architecture
 	 */
-	Detect.OS = function(parent){
-		return this.parse_os_info(parent);
+	Detect.OS = function(){
+		return this.parse_os_info();
 	};
 
 		/**
@@ -352,11 +341,10 @@ var Detect = function(config){
 		/**
 		 * Determine the user's operating system
 		 *
-		 * @param {object} parent The Detect object
 		 * @since  1.3.0
 		 * @return {string}
 		 */
-		Detect.OS.prototype.parse_os_info = function(parent){
+		Detect.OS.prototype.parse_os_info = function(){
 			var output = new this.Unknown(),
 				bits = this.determine_cpu_arch();
 
@@ -410,18 +398,16 @@ var Detect = function(config){
 	 * Determine what plugins, if any, the browser is running
 	 *
 	 * @param {object} options [Any required settings]
-	 * @since  1.0.0
+	 * @since  1.3.0
 	 * @return {object}
 	 */
 	Detect.Plugins = function(utils){
-		this.content = [];
-
 		if(window.navigator.plugins && window.navigator.plugins.length > 1){
 
 			for(var i = 0; i < window.navigator.plugins.length; i++){
 				var plugin = window.navigator.plugins[i];
 
-				this.content.push({name: plugin.name, description: plugin.description, slug: utils.slug(plugin.name)});
+				this[utils.slug(plugin.name)] = {name: plugin.name, description: plugin.description}
 			}
 		}
 		
@@ -547,7 +533,7 @@ var Detect = function(config){
 		 * @since  1.2.0
 		 * @return {number}
 		 */
-		Detect.Utils.prototype.shortVersion = function(longVersion){
+		Detect.Utils.prototype.short_version = function(longVersion){
 			if(_short = longVersion.split(".")[0])
 				return parseInt(_short);
 		};
