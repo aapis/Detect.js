@@ -62,7 +62,7 @@ var Detect = function(options){
 		var user_os = new Detect.OS(this); //temp
 		var output = {
 			os: user_os,//this.os(),
-			browser: new Detect.Browser(this, user_os),//this.browser(),
+			browser: new Detect.Browser(user_os),//this.browser(),
 			plugins: new Detect.Plugins(options),//this.plugins(options),
 			supports: new Detect.Supports(),//this.supports(),
 		};
@@ -76,8 +76,8 @@ var Detect = function(options){
 		if(options.ignore.browser)
 			delete output.browser;
 
-		if(options.addClasses)
-			this.addClasses(options, output);
+		// if(options.addClasses)
+		// 	this.addClasses(options, output);
 		
 		return output;
 	};
@@ -198,161 +198,288 @@ var Detect = function(options){
 		return {};
 	};
 
-	Detect.Browser = function(parent, os){
-		return this.parse_browser_info(parent, os);
-	};
-
 	/**
-	 * Object that contains commonly required strings from the UA
-	 * NOTE: accessing directly will give you incorrect data, use Detect.browser() 
-	 * to access this data instead
+	 * Determine the user's browser by matching various identifying properties
+	 * against known values 
 	 * 
-	 * @since 1.3.0
-	 * @type {Object}
+	 * @param {object} os User's operating system
 	 */
-	Detect.Browser.prototype.constants = {
-		UNKNOWN: {name: 'unknown', engine: 'unknown', version: '0.0.0', short_version: 0},
-		CHROME_BLINK: {name: 'chrome', engine: 'blink', version: '0.0.0', short_version: 0},
-		FIREFOX: {name: 'firefox', engine: 'gecko', version: '0.0.0', short_version: 0},
-		OPERA_PRESTO: {name: 'opera', engine: 'presto', version: '0.0.0', short_version: 0}, //preliminary support
-		OPERA_BLINK: {name: 'opera', engine: 'blink', version: '0.0.0', short_version: 0}, //currently not tested for
-		SAFARI: {name: 'safari', engine: 'webkit', version: '0.0.0', short_version: 0},
-		IE: {name: 'ie', engine: 'trident', version: '0.0.0', short_version: 0},
+	Detect.Browser = function(os){
+		return this.parse_browser_info(os);
 	};
 
-	/**
-	 * Determine the user's browser
-	 *
-	 * @param {object} options [Any required settings]
-	 * @since  1.3.0
-	 * @return {object}
-	 */
-	Detect.Browser.prototype.parse_browser_info = function(parent, os){
-		var output = this.constants.UNKNOWN;
+		/**
+		 * Browser brand: Unknown
+		 *
+		 * @since 1.3.0
+		 */
+		Detect.Browser.prototype.Unknown = function(){
+			this.name = "unknown";
+			this.engine = "unknown";
+			this.version = "0.0.0";
+			this.short_version = 0;
+		};
 
-		//safari/webkit
-		if(/^Version/.test(parent._Navigator.userAgent) && /Safari/.test(parent._Navigator.userAgent)){
-			switch(os.system){
-				case os.constants.MAC.system:
-					this.constants.SAFARI.version = this._navParts[5].split(' ')[0].substring(8); break;
+			Detect.Browser.prototype.Unknown.prototype.setVersion = function(version){
+				if(version)
+					this.version = version; //format into long version
+			};
 
-				default:
-					this.constants.SAFARI.version = this._navParts[5].split(' ')[0].substring(8);
+			Detect.Browser.prototype.Unknown.prototype.setEngine = function(engine){
+				if(engine)
+					this.engine = engine;
+			};
 
+		/**
+		 * Browser brand: Apple Safari
+		 *
+		 * @since 1.3.0
+		 */
+		Detect.Browser.prototype.Safari = function(){
+			this.name = "safari";
+			this.engine = "webkit";
+			this.version = "0.0.0";
+			this.short_version = 0;
+		};
+
+			Detect.Browser.prototype.Safari.prototype.setVersion = function(version){
+				if(version){
+					this.version = version; //format into long version
+				}else {
+					//determine version dynamically
+					var _ua = window.navigator.userAgent,
+						_ver = _ua.match(/Version\/[0-9-.]+/);
+
+					this.version = _ver[0].match(/[0-9-.]+/)[0];
+				}
+			};
+
+			Detect.Browser.prototype.Safari.prototype.setEngine = function(engine){
+				if(engine)
+					this.engine = engine;
+			};
+
+		/**
+		 * Browser brand: Google Chrome
+		 *
+		 * @since 1.3.0
+		 */
+		Detect.Browser.prototype.Chrome = function(){
+			this.name = "chrome";
+			this.engine = "blink";
+			this.version = "0.0.0";
+			this.short_version = 0;
+		};
+
+			Detect.Browser.prototype.Chrome.prototype.setVersion = function(version){
+				if(version){
+					this.version = version; //format into long version
+				}else {
+					//determine version dynamically
+					var _ua = window.navigator.userAgent,
+						_ver = _ua.match(/Chrome\/[0-9-.]+/);
+
+					this.version = _ver[0].match(/[0-9-.]+/)[0];
+				}
+			};
+
+			Detect.Browser.prototype.Chrome.prototype.setEngine = function(engine){
+				if(engine)
+					this.engine = engine;
+			};
+
+		/**
+		 * Browser brand: Mozilla Firefox
+		 *
+		 * @since 1.3.0
+		 */
+		Detect.Browser.prototype.Firefox = function(){
+			this.name = "firefox";
+			this.engine = "gecko";
+			this.version = "0.0.0";
+			this.short_version = 0;
+		};
+
+			Detect.Browser.prototype.Firefox.prototype.setVersion = function(version){
+				if(version){
+					this.version = version; //format into long version
+				}else {
+					//determine version dynamically
+					var _ua = window.navigator.userAgent,
+						_ver = _ua.match(/Firefox\/[0-9-.]+/);
+
+					this.version = _ver[0].match(/[0-9-.]+/)[0];
+				}
+			};
+
+			Detect.Browser.prototype.Firefox.prototype.setEngine = function(engine){
+				if(engine)
+					this.engine = engine;
+			};
+
+		/**
+		 * Browser brand: Microsoft Internet Explorer
+		 *
+		 * @since 1.3.0
+		 */
+		Detect.Browser.prototype.InternetExplorer = function(){
+			this.name = "internet_explorer";
+			this.engine = "trident";
+			this.version = "0.0.0";
+			this.short_version = 0;
+		};
+
+			Detect.Browser.prototype.InternetExplorer.prototype.setVersion = function(version){
+				if(version){
+					this.version = version; //format into long version
+				}else {
+					//determine version dynamically
+					var _ua = window.navigator.userAgent,
+						_ver = _ua.match(/MSIE\/[0-9-.]+/);
+
+					this.version = _ver[0].match(/[0-9-.]+/)[0];
+				}
+			};
+
+			Detect.Browser.prototype.InternetExplorer.prototype.setEngine = function(engine){
+				if(engine)
+					this.engine = engine;
+			};
+
+		/**
+		 * Determine the user's browser
+		 *
+		 * TODO: Is this required?  Might be able to simplify/remove this method
+		 * @param {object} options [Any required settings]
+		 * @since  1.3.0
+		 * @return {object}
+		 */
+		Detect.Browser.prototype.parse_browser_info = function(os){
+			var output = new this.Unknown();
+
+			//safari/webkit
+			if(/Version/.test(window.navigator.userAgent) && /Safari/.test(window.navigator.userAgent)){
+				var Safari = new this.Safari();
+					Safari.setVersion();
+
+				output = Safari;
 			}
 
-			output = this.constants.SAFARI;
-		}
+			//chrome/blink
+			if(/Chrome/.test(window.navigator.userAgent) && /AppleWebKit/.test(window.navigator.userAgent)){
+				//this.constants.CHROME_BLINK.version = this._navParts[5].substring(7, 19);
+				var Chrome = new this.Chrome();
+					Chrome.setVersion();
 
-
-		//chrome/blink
-		if(/^Chrome/.test(parent._Navigator.userAgent) && /^AppleWebKit/.test(parent._Navigator.userAgent)){
-			this.constants.CHROME_BLINK.version = this._navParts[5].substring(7, 19);
-
-			output = this.constants.CHROME_BLINK;
-		}
-
-		//firefox/gecko
-		if(/^(Gecko|Firefox)/.test(parent._Navigator.userAgent)){
-			switch(os){
-				case os.constants.LINUX.system:
-					this.constants.FIREFOX.version = this._navParts[5].split(' ')[1].substring(8); break;
-
-				case os.constants.WINDOWS.system:
-					this.constants.FIREFOX.version = this._navParts[4].split(' ')[1].substring(8); break;
+				output = Chrome;
 			}
+
+			//firefox/gecko
+			if(/(Firefox)/.test(window.navigator.userAgent)){
+				var Firefox = new this.Firefox();
+					Firefox.setVersion();
+				
+				output = Firefox;
+			}
+
+			if(/iPad/.test(window.navigator.userAgent)){
+				var MobileSafari = new this.MobileSafari();
+					MobileSafari.setVersion();
+
+				output = MobileSafari;
+			} 
+
+			//ie/trident
+			if(/MSIE/.test(window.navigator.userAgent)){
+				var InternetExplorer = new this.InternetExplorer();
+					InternetExplorer.setVersion();
+
+				output = InternetExplorer;
+			}
+
+			//opera/presto
+			if(/Opera/.test(window.navigator.userAgent)){
+				var Opera = new this.Opera();
+					Opera.setVersion();
+
+				output = Opera; //preliminary support
+			}
+
+			//opera/blink
 			
-			output = this.constants.FIREFOX;
-		}
+			//populate short version property
+			//output.short_version = this.utils.shortVersion(output.version);			
 
-		if(/iPad/.test(parent._Navigator.userAgent)){
-			output = this.constants.IPAD;
-		} 
+			return output;
+		};
 
-		//ie/trident
-		if(/^MSIE/.test(parent._Navigator.userAgent)){
-			this.constants.IE.engine = this._navParts[5].split('/')[0]; //we can get a little more specific here, so why not
-			this.constants.IE.version = this._navParts[5].split('/')[1];
+	/**
+	 * [OS description]
+	 * @param {[type]} parent [description]
+	 */
+	Detect.OS = function(parent){
+		return this.parse_os_info(parent);
+	};
 
-			output = this.constants.IE;
-		}
+		/**
+		 * User's operating system text placeholders
+		 *
+		 * @since  1.3.0
+		 * @type {Object}
+		 */
+		Detect.OS.prototype.UNKNOWN = function(bits){
+			this.system = "UNKNOWN";
+			this.architecture = (bits ? bits : 32);
+		};
 
-		//opera/presto
-		if(/^Opera/.test(parent._Navigator.userAgent)){
-			output = this.constants.OPERA_PRESTO; //preliminary support
-		}
+		Detect.OS.prototype.MAC = function(bits){
+			this.system = "Mac";
+			this.architecture = (bits ? bits : 32);
+		};
 
-		//opera/blink
+		Detect.OS.prototype.WINDOWS = function(bits){
+			this.system = "Windows";
+			this.architecture = (bits ? bits : 32);
+		};
+
+		Detect.OS.prototype.LINUX = function(bits){
+			this.system = "Linux";
+			this.architecture = (bits ? bits : 32);
+		};
+
+		/**
+		 * Determine the user's operating system
+		 *
+		 * @param {object} parent The Detect object
+		 * @since  1.3.0
+		 * @return {string}
+		 */
+		Detect.OS.prototype.parse_os_info = function(parent){
+			var output = new this.UNKNOWN(),
+				bits = parent.bits();
+
+			switch(window.navigator.platform.toLowerCase().split(' ')[0]){
+				case 'macintel':
+				case 'macppc':
+					output = new this.MAC(bits); break;
+
+				case 'win32':
+					output = new this.WINDOWS(bits); break;
+
+				case 'linux':
+					output = new this.LINUX(bits); break;
+			}
+
+			return output;
+		};
+
+	Detect.Plugins = function(){
 		
-		//populate short version property
-		//output.short_version = this.utils.shortVersion(output.version);			
-
-		return output;
 	};
 
-Detect.OS = function(parent){
-	return this.parse_os_info(parent);
-};
-
-	/**
-	 * User's operating system text placeholders
-	 *
-	 * @since  1.3.0
-	 * @type {Object}
-	 */
-	Detect.OS.prototype.UNKNOWN = function(){
-		this.name = "UNKNOWN";
-		this.architecture = 32;
+	Detect.Supports = function(){
+		
 	};
-
-	Detect.OS.prototype.MAC = function(){
-		this.name = "Mac";
-		this.architecture = 32;
-	};
-
-	Detect.OS.prototype.WINDOWS = function(){
-		this.name = "Windows";
-		this.architecture = 32;
-	};
-
-	Detect.OS.prototype.LINUX = function(){
-		this.name = "Linux";
-		this.architecture = 32;
-	};
-
-	/**
-	 * Determine the user's operating system
-	 *
-	 * @param {object} options [Any required settings]
-	 * @since  1.0.0
-	 * @return {string}
-	 */
-	Detect.OS.prototype.parse_os_info = function(parent){
-		var output = new this.UNKNOWN();
-			bits = parent.bits();
-			
-		switch(parent._Navigator.platform.toLowerCase().split(' ')[0]){
-			case 'macintel':
-			case 'macppc':
-				output = new this.MAC(); break;
-
-			case 'win32':
-				output = new this.WINDOWS(); break;
-
-			case 'linux':
-				output = new this.LINUX(); break;
-		}
-
-		return output;
-	};
-
-Detect.Plugins = function(){
-	
-};
-
-Detect.Supports = function(){
-	
-};
 
 /**
  * A set of utility plugins for working with installed plugins
