@@ -32,8 +32,8 @@ var Detect = function(options){
 	 * @since 1.0.0
 	 * @type {Object}
 	 */
-	Detect.prototype._Version = '1.2.0';
-	
+	Detect.prototype._Version = '1.3.0';
+
 	/**
 	 * Sets the _Browser and _OS variables
 	 *
