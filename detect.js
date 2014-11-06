@@ -118,37 +118,6 @@ var Detect = function(options){
 	};
 
 	/**
-	 * Determine the CPU architecture - 32 or 64
-	 * Note: some browsers don't broadcast the system architecture 
-	 * so this will make it's best guess
-	 * 
-	 * @since  1.0.0
-	 * @return {mixed} [bool|string]
-	 */
-	Detect.prototype.bits = function(){
-		var knownBits = this._Navigator.platform.toLowerCase().split(' ')[1],
-			output = (/(86|64)/.test(knownBits) ? '64' : '32');
-
-		switch(this._Navigator.platform.toLowerCase().split(' ')[0] || this._navParts[3].toLowerCase()){
-			case 'macintel':
-				output = '64'; break;
-
-			case 'macppc':
-				output = '32'; break;
-
-			//not tested yet
-			case 'win32': 
-				output = (this._navParts[2].match(/wow64/i) ? '64' : '32'); break;
-
-			//not tested yet
-			case 'linux': 
-				output = '64'; break; //currently an assumption
-		}
-
-		return output;
-	};
-
-	/**
 	 * Add classes to the body element if options.addBodyClasses is true
 	 *
 	 * @param {object} options
@@ -420,22 +389,22 @@ var Detect = function(options){
 		 * @since  1.3.0
 		 * @type {Object}
 		 */
-		Detect.OS.prototype.UNKNOWN = function(bits){
-			this.system = "UNKNOWN";
+		Detect.OS.prototype.Unknown = function(bits){
+			this.system = "Unknown";
 			this.architecture = (bits ? bits : 32);
 		};
 
-		Detect.OS.prototype.MAC = function(bits){
+		Detect.OS.prototype.Mac = function(bits){
 			this.system = "Mac";
 			this.architecture = (bits ? bits : 32);
 		};
 
-		Detect.OS.prototype.WINDOWS = function(bits){
+		Detect.OS.prototype.Windows = function(bits){
 			this.system = "Windows";
 			this.architecture = (bits ? bits : 32);
 		};
 
-		Detect.OS.prototype.LINUX = function(bits){
+		Detect.OS.prototype.Linux = function(bits){
 			this.system = "Linux";
 			this.architecture = (bits ? bits : 32);
 		};
@@ -448,19 +417,51 @@ var Detect = function(options){
 		 * @return {string}
 		 */
 		Detect.OS.prototype.parse_os_info = function(parent){
-			var output = new this.UNKNOWN(),
-				bits = parent.bits();
+			var output = new this.Unknown(),
+				bits = this.determine_cpu_arch();
 
 			switch(window.navigator.platform.toLowerCase().split(' ')[0]){
 				case 'macintel':
 				case 'macppc':
-					output = new this.MAC(bits); break;
+					output = new this.Mac(bits); break;
 
 				case 'win32':
-					output = new this.WINDOWS(bits); break;
+					output = new this.Windows(bits); break;
 
 				case 'linux':
-					output = new this.LINUX(bits); break;
+					output = new this.Linux(bits); break;
+			}
+
+			return output;
+		};
+
+		/**
+		 * Determine the CPU architecture - 32 or 64
+		 * Note: some browsers don't broadcast the system architecture 
+		 * so this will make it's best guess
+		 * 
+		 * @since  1.0.0
+		 * @return {mixed} [bool|string]
+		 */
+		Detect.OS.prototype.determine_cpu_arch = function(){
+			var _platform = window.navigator.platform.toLowerCase().split(' '),
+				knownBits = _platform[1],
+				output = (/(86|64)/.test(knownBits) ? '64' : '32');
+
+			switch(_platform[0]){
+				case 'macintel':
+					output = '64'; break;
+
+				case 'macppc':
+					output = '32'; break;
+
+				//not tested yet
+				case 'win32': 
+					output = (window.navigator.match(/wow64/i) ? '64' : '32'); break;
+
+				//not tested yet
+				case 'linux': 
+					output = '64'; break; //currently an assumption
 			}
 
 			return output;
