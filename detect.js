@@ -9,11 +9,11 @@ var Detect = function(options){
 	//set options to either a default or the chosen value
 	options = options || {};
 	options.addClasses = !!options.addClasses;
-	options.classPrefix = options.classPrefix || 'default';
 	options.ignore = {
 		plugins: !!options.ignore.plugins,
 		os: !!options.ignore.os,
-		browser: !!options.ignore.browser
+		browser: !!options.ignore.browser,
+		supports: !!options.ignore.supports,
 	};
 	
 	//instantiate utility object
@@ -34,31 +34,31 @@ var Detect = function(options){
 	Detect.prototype._Version = '1.3.0';
 
 	/**
-	 * Sets the _Browser and _OS variables
+	 * Creates and populates the properties of the Detect object
 	 *
 	 * @param {object} options
 	 * @since  1.0.0
-	 * @return {object} [Aggregated data from this.browser, this.os and this.plugins]
+	 * @return {object} Aggregated data object
 	 */
 	Detect.prototype.do = function(options){
-		var output = {};
+		this.output = {};
 		
 		//if(false === options.ignore.plugins)
-			output.plugins = new Detect.Plugins(options);
+			this.output.plugins = new Detect.Plugins(this.utils);
 
 		if(false === options.ignore.os)
-			output.os = new Detect.OS(this);
+			this.output.os = new Detect.OS(this);
 
 		if(false === options.ignore.browser)
-			output.browser = new Detect.Browser();
+			this.output.browser = new Detect.Browser();
 
 		if(false === options.ignore.supports)
-			output.supports = new Detect.Supports();
+			this.output.supports = new Detect.Supports();
 
-		// if(options.addClasses)
-		// 	this.addClasses(options, output);
+		if(options.addClasses)
+			this.add_classes();
 		
-		return output;
+		return this.output;
 	};
 
 	/**
@@ -66,38 +66,34 @@ var Detect = function(options){
 	 *
 	 * @param {object} options
 	 * @param {object} ref [The object we use to determine the proper class names]
-	 * @since  1.0.0
+	 * @since  1.3.0
 	 * @return {void}
 	 */
-	Detect.prototype.addClasses = function(options, ref){
-		var useDefault = (options.classPrefix === 'default');
+	Detect.prototype.add_classes = function(){
+		var html_el = document.querySelector('html');
 
-		for(var prop in ref){
-			if(ref[prop] && typeof ref[prop] === 'object'){
-				for(var iprop in ref[prop]){
-					if(ref[prop][iprop]){ //ignore undefined or null values
-						var html_el = document.querySelector('html');
+		for(var prop_1 in this.output){
+			if(this.output[prop_1]){
+				for(var prop_2 in this.output[prop_1]){
+					switch(typeof this.output[prop_1][prop_2]){
+						case "string":
+							html_el.classList.add(prop_2 +"-"+ this.output[prop_1][prop_2].toLowerCase());
+						break;
 
-						if(typeof ref[prop][iprop] === 'string'){ //system, architecture, browser name, browser engine, etc
-							if(useDefault){
-								html_el.classList.add(iprop +'-'+ ref[prop][iprop].toLowerCase());	
-							}else {
-								html_el.classList.add(options.classPrefix + iprop +'-'+ ref[prop][iprop].toLowerCase());
+						case "number":
+							html_el.classList.add(prop_2 +"-"+ this.output[prop_1][prop_2]);
+						break;
+
+						case "object":
+							for(var i = 0, plugins = this.output[prop_1][prop_2]; i < plugins.length; i++){
+								html_el.classList.add(this.utils.sanitize('plugin-'+ plugins[i].slug.toLowerCase()));
 							}
-						}else { //plugin array
-							for(var i = 0, plgs = ref[prop][iprop]; i < plgs.length; i++){
-								if(useDefault){
-									html_el.classList.add(this.utils.sanitize('plugin-'+ plgs[i].slug.toLowerCase()));
-								}else {
-									html_el.classList.add(this.utils.sanitize(options.classPrefix + 'plugin-'+ plgs[i].slug.toLowerCase()));
-								}
-							}
-						}
+						break;
 					}
 				}
 			}
 		}
-	};
+	}
 
 	/**
 	 * Detect support for common web technologies like websockets and indexedDB
@@ -418,25 +414,26 @@ var Detect = function(options){
 	 * @since  1.0.0
 	 * @return {object}
 	 */
-	Detect.Plugins = function(options){
-		var output = {};
+	Detect.Plugins = function(utils){
+		this.content = [];
 
 		if(window.navigator.plugins && window.navigator.plugins.length > 1){
-			output.content = [];
 
 			for(var i = 0; i < window.navigator.plugins.length; i++){
 				var plugin = window.navigator.plugins[i];
 
-				output.content.push({name: plugin.name, description: plugin.description, slug: this.utils.slug(plugin.name)});
+				this.content.push({name: plugin.name, description: plugin.description, slug: utils.slug(plugin.name)});
 			}
 		}
 		
-		return output;
+		return this;
 	};
 
 	/**
 	 * Detect support for commonly used libraries like localstorage, websockets, 
 	 * etc
+	 *
+	 * @since 1.3.0
 	 */
 	Detect.Supports = function(){
 		
@@ -470,10 +467,10 @@ var Detect = function(options){
 		 * Determine if a plugin is installed
 		 *
 		 * @param  {string}  plugin_slug [The slug to compare each installed plugin against]
-		 * @since  1.0.0
+		 * @since  1.3.0
 		 * @return {Boolean}
 		 */
-		Detect.Utils.prototype.isInstalled = function(plugin_slug){
+		Detect.Utils.prototype.is_installed = function(plugin_slug){
 			var found = 0;
 
 			if(plugin_slug && typeof this.ref.plugins === 'object'){
@@ -491,13 +488,13 @@ var Detect = function(options){
 		 * Determine the version of a specified plugin
 		 *
 		 * @param  {string} plugin_slug [The slug to compare each installed plugin against]
-		 * @since  1.0.0
+		 * @since  1.3.0
 		 * @return {mixed}
 		 */
-		Detect.Utils.prototype.getVersion = function(plugin_slug){
+		Detect.Utils.prototype.get_version = function(plugin_slug){
 			var pattern = new RegExp("\d+(\d+)?", 'g');
 
-			if(this.isInstalled(plugin_slug)){
+			if(this.is_installed(plugin_slug)){
 				//if there is a version string in either the name or the description, we will use it
 				if(pattern.test(plgs[i].name) || pattern.test(plgs[i].description)){
 					return plgs[i].description.match(pattern).join('.');
