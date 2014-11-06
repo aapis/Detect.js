@@ -39,12 +39,6 @@ output:
 		<th>Default</th>
 	</tr>
 	<tr>
-		<td>format</td>
-		<td>Format for output in the browser (TRUE) or output to console (FALSE)</td>
-		<td>bool</td>
-		<td>false</td>
-	</tr>
-	<tr>
 		<td>addClasses</td>
 		<td>Add detected browser and system information to the class list of the HTML node.</td>
 		<td>bool</td>

@@ -8,7 +8,6 @@
 var Detect = function(options){
 	//set options to either a default or the chosen value
 	options = options || {};
-	options.format = !!options.format;
 	options.addClasses = !!options.addClasses;
 	options.classPrefix = options.classPrefix || 'default';
 	options.ignore = {
@@ -44,7 +43,7 @@ var Detect = function(options){
 	Detect.prototype.do = function(options){
 		var output = {};
 		
-		if(false === options.ignore.plugins)
+		//if(false === options.ignore.plugins)
 			output.plugins = new Detect.Plugins(options);
 
 		if(false === options.ignore.os)
@@ -61,8 +60,6 @@ var Detect = function(options){
 		
 		return output;
 	};
-
-	
 
 	/**
 	 * Add classes to the body element if options.addBodyClasses is true
@@ -427,30 +424,20 @@ var Detect = function(options){
 		if(window.navigator.plugins && window.navigator.plugins.length > 1){
 			output.content = [];
 
-			if(options.format){
-				//HTML
-				for(var i = 0; i < window.navigator.length; i++){
-					var plugin = window.navigator.plugins[i];
+			for(var i = 0; i < window.navigator.plugins.length; i++){
+				var plugin = window.navigator.plugins[i];
 
-					if(plugin.name)
-						output.content.push('<li>Name: <strong>'+ plugin.name +'</strong></li>');
-					if(plugin.description)
-						output.content.push('<li>Description: <strong>'+ plugin.description +'</strong></li>');
-				}
-				output = output.content.join(' ');
-			}else {
-				//object
-				for(var i = 0; i < window.navigator.plugins.length; i++){
-					var plugin = window.navigator.plugins[i];
-
-					output.content.push({name: plugin.name, description: plugin.description, slug: this.utils.slug(plugin.name)});
-				}
+				output.content.push({name: plugin.name, description: plugin.description, slug: this.utils.slug(plugin.name)});
 			}
 		}
 		
 		return output;
 	};
 
+	/**
+	 * Detect support for commonly used libraries like localstorage, websockets, 
+	 * etc
+	 */
 	Detect.Supports = function(){
 		
 	};
