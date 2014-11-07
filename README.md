@@ -12,20 +12,24 @@ To view the full object, console.log(info)
 output: 
 {
 	browser: {
-		short_version: 'browserShortVersion',
-		name         : 'browserName',
-		engine       : 'browserEngine', 
-		version      : 'browserVersion',
+		short_version: browserShortVersion,
+		name         : "browserName",
+		engine       : "browserEngine", 
+		version      : "browserVersion",
 	},
 	
 	os: {
-		architecture: 'systemBits',
-		system: 'systemName',
+		architecture: systemBits,
+		system: "systemName",
 	},
 
 	plugins: {
-		content: [INSTALLED_PLUGIN_ARRAY]
-	}
+		[INSTALLED_PLUGINS_LIST]
+	},
+
+	supports: {
+		[BROWSER_SUPPORTS_FEATURE_LIST]
+	},
 }
 ```
 
