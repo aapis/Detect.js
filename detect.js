@@ -37,13 +37,13 @@ var Detect = function(config){
 		this.output = {};
 		
 		if(false === options.ignore.plugins)
-			this.output.plugins = new Detect.Plugins(this.utils);
+			this.output.plugins = new Detect.Plugins();
 
 		if(false === options.ignore.os)
 			this.output.os = new Detect.OS();
 
 		if(false === options.ignore.browser)
-			this.output.browser = new Detect.Browser(this.utils);
+			this.output.browser = new Detect.Browser();
 
 		if(false === options.ignore.supports)
 			this.output.supports = new Detect.Supports();
@@ -77,10 +77,9 @@ var Detect = function(config){
 							html_el.classList.add(prop_2 +"-"+ this.output[prop_1][prop_2]);
 						break;
 
-						case "object":
-							for(var i = 0, plugins = this.output[prop_1][prop_2]; i < plugins.length; i++){
-								html_el.classList.add(this.utils.sanitize('plugin-'+ plugins[i].slug.toLowerCase()));
-							}
+						//plugin list
+						case "object":				
+							html_el.classList.add(Detect.Utils.slug('plugin-'+ this.output[prop_1][prop_2].name));
 						break;
 					}
 				}
@@ -92,8 +91,8 @@ var Detect = function(config){
 	 * Determine the user's browser by matching various identifying properties
 	 * against known values 
 	 */
-	Detect.Browser = function(utils){
-		return this.parse_browser_info(utils);
+	Detect.Browser = function(){
+		return this.parse_browser_info();
 	};
 
 		/**
@@ -212,11 +211,10 @@ var Detect = function(config){
 		/**
 		 * Determine the user's browser
 		 *
-		 * @param {object} utils  Detect.Utils
 		 * @since  1.3.0
 		 * @return {object}
 		 */
-		Detect.Browser.prototype.parse_browser_info = function(utils){
+		Detect.Browser.prototype.parse_browser_info = function(){
 			var output = new this.Unknown();
 
 			//safari/webkit
@@ -366,17 +364,16 @@ var Detect = function(config){
 	/**
 	 * Determine what plugins, if any, the browser is running
 	 *
-	 * @param {object} options [Any required settings]
 	 * @since  1.3.0
 	 * @return {object}
 	 */
-	Detect.Plugins = function(utils){
+	Detect.Plugins = function(){
 		if(window.navigator.plugins && window.navigator.plugins.length > 1){
 
 			for(var i = 0; i < window.navigator.plugins.length; i++){
 				var plugin = window.navigator.plugins[i];
 
-				this[utils.slug(plugin.name)] = {name: plugin.name, description: plugin.description}
+				this[Detect.Utils.slug(plugin.name)] = {name: plugin.name, description: plugin.description}
 			}
 		}
 		
