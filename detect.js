@@ -205,10 +205,11 @@ var Detect = function(config){
 		 * @return {object}
 		 */
 		Detect.Browser.prototype.parse_browser_info = function(){
-			var output = new this.Unknown();
+			var output = new this.Unknown(),
+				_ua = window.navigator.userAgent;
 
 			//safari/webkit
-			if(/Version/.test(window.navigator.userAgent) && /Safari/.test(window.navigator.userAgent)){
+			if(/Version/.test(_ua) && /Safari/.test(_ua)){
 				var Safari = new this.Safari();
 					Safari.set_version();
 
@@ -216,7 +217,7 @@ var Detect = function(config){
 			}
 
 			//chrome/blink
-			if(/Chrome/.test(window.navigator.userAgent) && /AppleWebKit/.test(window.navigator.userAgent)){
+			if(/Chrome/.test(_ua) && /AppleWebKit/.test(_ua)){
 				var Chrome = new this.Chrome();
 					Chrome.set_version();
 
@@ -224,14 +225,14 @@ var Detect = function(config){
 			}
 
 			//firefox/gecko
-			if(/(Firefox)/.test(window.navigator.userAgent)){
+			if(/(Firefox)/.test(_ua)){
 				var Firefox = new this.Firefox();
 					Firefox.set_version();
 				
 				output = Firefox;
 			}
 
-			if(/iPad/.test(window.navigator.userAgent)){
+			if(/iPad/.test(_ua)){
 				var MobileSafari = new this.MobileSafari();
 					MobileSafari.set_version();
 
@@ -239,7 +240,7 @@ var Detect = function(config){
 			} 
 
 			//ie
-			if(/Trident/.test(window.navigator.userAgent)){
+			if(/Trident/.test(_ua)){
 				var InternetExplorer = new this.InternetExplorer();
 					InternetExplorer.set_version();
 
@@ -247,7 +248,7 @@ var Detect = function(config){
 			}
 
 			//opera
-			if(/Opera/.test(window.navigator.userAgent)){
+			if(/Opera/.test(_ua)){
 				var Opera = new this.Opera();
 					Opera.set_version();
 
