@@ -42,7 +42,7 @@ var Detect = function(config){
 	Detect.prototype.generate_output = function(options){
 		this.output = {};
 		
-		//if(false === options.ignore.plugins)
+		if(false === options.ignore.plugins)
 			this.output.plugins = new Detect.Plugins(this.utils);
 
 		if(false === options.ignore.os)
@@ -92,7 +92,7 @@ var Detect = function(config){
 				}
 			}
 		}
-	}
+	};
 
 	/**
 	 * Determine the user's browser by matching various identifying properties
@@ -119,11 +119,6 @@ var Detect = function(config){
 					this.version = version; //format into long version
 			};
 
-			Detect.Browser.prototype.Unknown.prototype.set_engine = function(engine){
-				if(engine)
-					this.engine = engine;
-			};
-
 		/**
 		 * Browser brand: Apple Safari
 		 *
@@ -146,11 +141,6 @@ var Detect = function(config){
 
 					this.version = _ver[0].match(/[0-9-.]+/)[0];
 				}
-			};
-
-			Detect.Browser.prototype.Safari.prototype.set_engine = function(engine){
-				if(engine)
-					this.engine = engine;
 			};
 
 		/**
@@ -177,11 +167,6 @@ var Detect = function(config){
 				}
 			};
 
-			Detect.Browser.prototype.Chrome.prototype.set_engine = function(engine){
-				if(engine)
-					this.engine = engine;
-			};
-
 		/**
 		 * Browser brand: Mozilla Firefox
 		 *
@@ -204,11 +189,6 @@ var Detect = function(config){
 
 					this.version = _ver[0].match(/[0-9-.]+/)[0];
 				}
-			};
-
-			Detect.Browser.prototype.Firefox.prototype.set_engine = function(engine){
-				if(engine)
-					this.engine = engine;
 			};
 
 		/**
@@ -235,16 +215,10 @@ var Detect = function(config){
 				}
 			};
 
-			Detect.Browser.prototype.InternetExplorer.prototype.set_engine = function(engine){
-				if(engine)
-					this.engine = engine;
-			};
-
 		/**
 		 * Determine the user's browser
 		 *
-		 * TODO: Is this required?  Might be able to simplify/remove this method
-		 * @param {object} options [Any required settings]
+		 * @param {object} utils  Detect.Utils
 		 * @since  1.3.0
 		 * @return {object}
 		 */
@@ -310,7 +284,7 @@ var Detect = function(config){
 	Detect.OS = function(){
 		this.arch = 32;
 
-		//populate this.arch
+		//assign the correct value to this.arch
 		this.determine_cpu_arch();
 
 		return this.parse_os_info();
@@ -460,7 +434,7 @@ var Detect = function(config){
 		this._errors = {
 			NOT_FOUND: '%s Not Found',
 		};
-	}
+	};
 
 		/**
 		 * Determine if a plugin is installed
