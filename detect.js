@@ -555,3 +555,4 @@ var Detect = function(config){
 		Detect.Utils.format_error = function(type, repl){
 			return this.sprintf(this._errors[type], repl);
 		};
+		
