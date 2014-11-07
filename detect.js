@@ -137,6 +137,30 @@ var Detect = function(config){
 			};
 
 		/**
+		 * Browser brand: Apple Mobile Safari
+		 *
+		 * @since 1.3.1
+		 */
+		Detect.Browser.prototype.MobileSafari = function(){
+			this.name = "mobile_safari";
+			this.engine = "webkit";
+			this.version = "0.0.0";
+			this.short_version = 0;
+		};
+
+			Detect.Browser.prototype.MobileSafari.prototype.set_version = function(version){
+				if(version){
+					this.version = version; //format into long version
+				}else {
+					//determine version dynamically
+					var _ua = window.navigator.userAgent,
+						_ver = _ua.match(/Version\/[0-9-.]+/);
+
+					this.version = _ver[0].match(/[0-9-.]+/)[0];
+				}
+			};
+
+		/**
 		 * Browser brand: Google Chrome
 		 *
 		 * @since 1.3.0
@@ -327,24 +351,60 @@ var Detect = function(config){
 		};
 
 		/**
+		 * Android OS object prototype
+		 *
+		 * @since  1.3.1
+		 * @type {Object}
+		 */
+		Detect.OS.prototype.Android = function(bits){
+			this.system = "Android";
+			this.architecture = bits;
+		};
+
+		/**
+		 * iOS object prototype
+		 *
+		 * @since  1.3.1
+		 * @type {Object}
+		 */
+		Detect.OS.prototype.iOS = function(bits){
+			this.system = "iOS";
+			this.architecture = bits;
+		};
+
+
+		/**
 		 * Determine the user's operating system
 		 *
 		 * @since  1.3.0
 		 * @return {string}
 		 */
 		Detect.OS.prototype.parse_os_info = function(){
-			var output = new this.Unknown();
+			var output = new this.Unknown(),
+				_platform = window.navigator.platform.toLowerCase().split(' ');
 
-			switch(window.navigator.platform.toLowerCase().split(' ')[0]){
-				case 'macintel':
-				case 'macppc':
+			switch(_platform[0]){
+				case "macintel":
+				case "macppc":
 					output = new this.Mac(this.arch); break;
 
-				case 'win32':
+				case "win32":
 					output = new this.Windows(this.arch); break;
 
-				case 'linux':
+				case "linux":
 					output = new this.Linux(this.arch); break;
+
+				case "ipad":
+				case "iphone":
+					output = new this.iOS(this.arch); break;
+			}
+
+			//if there is a second part to the platform string, use it to get
+			//more specific
+			if(_platform[1]){
+				if(_platform[1].match(/^arm/)){
+					output = new this.Android(this.arch);
+				}
 			}
 
 			return output;
