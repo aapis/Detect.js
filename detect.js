@@ -14,12 +14,6 @@ var Detect = function(config){
 		browser: !!config.ignore.browser,
 		supports: !!config.ignore.supports,
 	};
-	
-	//instantiate utility object
-	this.utils = new Detect.Utils(this);
-
-	//expose utilities publically
-	window.dj_utils = this.utils;
 
 	return this.generate_output(options);
 };
@@ -273,7 +267,7 @@ var Detect = function(config){
 			}
 
 			//populate short version property
-			output.short_version = utils.short_version(output.version);			
+			output.short_version = Detect.Utils.short_version(output.version);			
 
 			return output;
 		};
@@ -419,21 +413,14 @@ var Detect = function(config){
 	 * @param {object} context [The Detect object]
 	 * @type {Object}
 	 */
-	Detect.Utils = function(output){
-		/**
-		 * Reference to the Detect object
-		 *
-		 * @type {object} The Detect object
-		 */
-		this.ref = output;
-
+	Detect.Utils = {
 		/**
 		 * Error strings
 		 * @type {Object}
 		 */
-		this._errors = {
+		_errors: {
 			NOT_FOUND: '%s Not Found',
-		};
+		},
 	};
 
 		/**
@@ -443,11 +430,11 @@ var Detect = function(config){
 		 * @since  1.3.0
 		 * @return {Boolean}
 		 */
-		Detect.Utils.prototype.is_installed = function(plugin_slug){
+		Detect.Utils.is_installed = function(plugin_slug){
 			var found = 0;
 
-			if(plugin_slug && typeof this.ref.plugins === 'object'){
-				for(var i = 0, plgs = this.ref.plugins.content; i < plgs.length; i++){
+			if(plugin_slug && typeof window.navigator.plugins === 'object'){
+				for(var i = 0, plgs = window.navigator.plugins; i < plgs.length; i++){
 					if(plugin_slug === plgs[i].slug){
 						found++;
 					}
@@ -464,7 +451,7 @@ var Detect = function(config){
 		 * @since  1.3.0
 		 * @return {mixed}
 		 */
-		Detect.Utils.prototype.get_version = function(plugin_slug){
+		Detect.Utils.get_version = function(plugin_slug){
 			var pattern = new RegExp("\d+(\d+)?", 'g');
 
 			if(this.is_installed(plugin_slug)){
@@ -484,7 +471,7 @@ var Detect = function(config){
 		 * @since  1.0.0
 		 * @return {string}
 		 */
-		Detect.Utils.prototype.slug = function(plugin){
+		Detect.Utils.slug = function(plugin){
 			return plugin.split(' ').join('_').toLowerCase();
 		};
 
@@ -495,7 +482,7 @@ var Detect = function(config){
 		 * @since  1.0.0
 		 * @return {string}
 		 */
-		Detect.Utils.prototype.sanitize = function(plugin){
+		Detect.Utils.sanitize = function(plugin){
 			var pattern = new RegExp('[a-zA-Z-_]+', 'gi');
 			
 			return pattern.exec(plugin);
@@ -508,7 +495,7 @@ var Detect = function(config){
 		 * @since  1.2.0
 		 * @return {number}
 		 */
-		Detect.Utils.prototype.short_version = function(longVersion){
+		Detect.Utils.short_version = function(longVersion){
 			if(_short = longVersion.split(".")[0])
 				return parseInt(_short);
 		};
@@ -520,6 +507,6 @@ var Detect = function(config){
 		 * @since 1.0.0
 		 * @return {String}
 		 */
-		Detect.Utils.prototype.sprintf = function(src, repl){
+		Detect.Utils.sprintf = function(src, repl){
 			return src.replace('%s', repl);
 		};

@@ -122,8 +122,8 @@
 
 				document.querySelector('.browser').innerHTML = '<strong>'+ info.browser.name +' '+ info.browser.engine +' '+ info.browser.version + '</strong>';
 				document.querySelector('.os').innerHTML = '<strong>'+ info.os.system +'</strong>';
-				document.querySelector('.player_version').innerHTML = '<strong>'+ dj_utils.get_version('divx_web_player') +'</strong>';
-				document.querySelector('.player_installed').innerHTML = '<strong>'+ dj_utils.is_installed('divx_web_player') +'</strong>';
+				document.querySelector('.player_version').innerHTML = '<strong>'+ Detect.Utils.get_version('divx_web_player') +'</strong>';
+				document.querySelector('.player_installed').innerHTML = '<strong>'+ Detect.Utils.is_installed('divx_web_player') +'</strong>';
 
 				//example #1
 				document.querySelector('.'+ info.os.system).classList.add('active');
