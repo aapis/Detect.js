@@ -416,6 +416,11 @@ var Detect = function(config){
 
 		for(var lib in _libs){
 			this[_libs[lib]] = (!!window[_libs[lib]] || !!document.body[_libs[lib]]);
+
+			//throw errors for missing features
+			if(!window[_libs[lib]] && !document.body[_libs[lib]]){
+				console.error(Detect.Utils.format_error("LIB_NOT_FOUND", _libs[lib]));
+			}
 		}
 
 		return this;
@@ -434,7 +439,8 @@ var Detect = function(config){
 		 * @type {Object}
 		 */
 		_errors: {
-			NOT_FOUND: '%s Not Found',
+			NOT_FOUND: "%s Not Found",
+			LIB_NOT_FOUND: "%s is not supported by this browser",
 		},
 	};
 
@@ -476,7 +482,7 @@ var Detect = function(config){
 				}
 			}
 
-			return this.sprintf(this._errors.NOT_FOUND, 'Plugin');
+			return this.format_error("NOT_FOUND", "Plugin");
 		};
 
 		/**
@@ -536,4 +542,8 @@ var Detect = function(config){
 		 */
 		Detect.Utils.in_array = function(needle, haystack){
 			return haystack.indexOf(needle) > -1;
+		};
+
+		Detect.Utils.format_error = function(type, repl){
+			return this.sprintf(this._errors[type], repl);
 		};
