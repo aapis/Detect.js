@@ -9,10 +9,10 @@ var Detect = function(config){
 	options = config || {};
 	options.add_classes = !!config.add_classes;
 	options.ignore = {
-		plugins: !!config.ignore.plugins,
-		os: !!config.ignore.os,
-		browser: !!config.ignore.browser,
-		supports: !!config.ignore.supports,
+		plugins:  Detect.Utils.in_array("plugins", config.ignore),
+		os:       Detect.Utils.in_array("os", config.ignore),
+		browser:  Detect.Utils.in_array("browser", config.ignore),
+		supports: Detect.Utils.in_array("supports", config.ignore),
 	};
 
 	return this.generate_output(options);
@@ -506,4 +506,15 @@ var Detect = function(config){
 		 */
 		Detect.Utils.sprintf = function(src, repl){
 			return src.replace('%s', repl);
+		};
+
+		/**
+		 * Determine if a key is present within an array
+		 * 
+		 * @param  {[type]} needle   [description]
+		 * @param  {[type]} haystack [description]
+		 * @return {[type]}          [description]
+		 */
+		Detect.Utils.in_array = function(needle, haystack){
+			return haystack.indexOf(needle) > -1;
 		};
