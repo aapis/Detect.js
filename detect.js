@@ -283,7 +283,7 @@ var Detect = function(config){
 	};
 
 		/**
-		 * User's operating system text placeholders
+		 * The default OS
 		 *
 		 * @since  1.3.0
 		 * @type {Object}
@@ -293,16 +293,34 @@ var Detect = function(config){
 			this.architecture = bits;
 		};
 
+		/**
+		 * OSX object prototype
+		 *
+		 * @since  1.3.0
+		 * @type {Object}
+		 */
 		Detect.OS.prototype.Mac = function(bits){
 			this.system = "Mac";
 			this.architecture = bits;
 		};
 
+		/**
+		 * Windows object prototype
+		 *
+		 * @since  1.3.0
+		 * @type {Object}
+		 */
 		Detect.OS.prototype.Windows = function(bits){
 			this.system = "Windows";
 			this.architecture = bits;
 		};
 
+		/**
+		 * Linux object prototype
+		 *
+		 * @since  1.3.0
+		 * @type {Object}
+		 */
 		Detect.OS.prototype.Linux = function(bits){
 			this.system = "Linux";
 			this.architecture = bits;
@@ -498,7 +516,7 @@ var Detect = function(config){
 		};
 
 		/**
-		 * Format a string 
+		 * Format a string
 		 * TODO: more dynamic formatting
 		 * 
 		 * @since 1.0.0
@@ -510,10 +528,11 @@ var Detect = function(config){
 
 		/**
 		 * Determine if a key is present within an array
-		 * 
-		 * @param  {[type]} needle   [description]
-		 * @param  {[type]} haystack [description]
-		 * @return {[type]}          [description]
+		 *
+		 * @since  1.3.0
+		 * @param  {string} needle   Value to search for
+		 * @param  {mixed} haystack  Object or array to search
+		 * @return {boolean}
 		 */
 		Detect.Utils.in_array = function(needle, haystack){
 			return haystack.indexOf(needle) > -1;
