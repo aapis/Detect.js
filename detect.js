@@ -544,6 +544,14 @@ var Detect = function(config){
 			return haystack.indexOf(needle) > -1;
 		};
 
+		/**
+		 * Use built-in error types to generate custom error strings
+		 *
+		 * @since  1.3.0
+		 * @param  {string} type  Error type, must match something in this._errors
+		 * @param  {string} repl  String replacement
+		 * @return {string}
+		 */
 		Detect.Utils.format_error = function(type, repl){
 			return this.sprintf(this._errors[type], repl);
 		};
