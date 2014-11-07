@@ -601,7 +601,11 @@ var Detect = function(config){
 		 * @return {boolean}
 		 */
 		Detect.Utils.in_array = function(needle, haystack){
-			return haystack.indexOf(needle) > -1;
+			if(typeof haystack === "object"){
+				return haystack.indexOf(needle) > -1;
+			}
+
+			return false;
 		};
 
 		/**
