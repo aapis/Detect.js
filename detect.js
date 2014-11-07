@@ -95,6 +95,19 @@ var Detect = function(config){
 		return this.parse_browser_info();
 	};
 
+		Detect.Browser.prototype.set_version = function(version){
+			if(version){
+					this.version = version; //format into long version
+				}else {
+					//determine version dynamically
+					var _ua = window.navigator.userAgent,
+						_ver = _ua.match(this.regex);
+
+					if(_ver[0])
+						this.version = _ver[0].match(/[0-9-.]+/)[0];
+				}
+		};
+
 		/**
 		 * Browser brand: Unknown
 		 *
@@ -105,12 +118,10 @@ var Detect = function(config){
 			this.engine = "unknown";
 			this.version = "0.0.0";
 			this.short_version = 0;
+			this.regex = new RegExp();
 		};
 
-			Detect.Browser.prototype.Unknown.prototype.set_version = function(version){
-				if(version)
-					this.version = version; //format into long version
-			};
+		Detect.Browser.prototype.Unknown.prototype = Detect.Browser.prototype;
 
 		/**
 		 * Browser brand: Apple Safari
@@ -122,19 +133,10 @@ var Detect = function(config){
 			this.engine = "webkit";
 			this.version = "0.0.0";
 			this.short_version = 0;
+			this.regex = /Version\/[0-9-.]+/;
 		};
 
-			Detect.Browser.prototype.Safari.prototype.set_version = function(version){
-				if(version){
-					this.version = version; //format into long version
-				}else {
-					//determine version dynamically
-					var _ua = window.navigator.userAgent,
-						_ver = _ua.match(/Version\/[0-9-.]+/);
-
-					this.version = _ver[0].match(/[0-9-.]+/)[0];
-				}
-			};
+		Detect.Browser.prototype.Safari.prototype = Detect.Browser.prototype;
 
 		/**
 		 * Browser brand: Apple Mobile Safari
@@ -146,19 +148,10 @@ var Detect = function(config){
 			this.engine = "webkit";
 			this.version = "0.0.0";
 			this.short_version = 0;
+			this.regex = /Version\/[0-9-.]+/;
 		};
 
-			Detect.Browser.prototype.MobileSafari.prototype.set_version = function(version){
-				if(version){
-					this.version = version; //format into long version
-				}else {
-					//determine version dynamically
-					var _ua = window.navigator.userAgent,
-						_ver = _ua.match(/Version\/[0-9-.]+/);
-
-					this.version = _ver[0].match(/[0-9-.]+/)[0];
-				}
-			};
+		Detect.Browser.prototype.MobileSafari.prototype = Detect.Browser.prototype;
 
 		/**
 		 * Browser brand: Google Chrome
@@ -170,19 +163,10 @@ var Detect = function(config){
 			this.engine = "blink";
 			this.version = "0.0.0";
 			this.short_version = 0;
+			this.regex = /Chrome\/[0-9-.]+/;
 		};
 
-			Detect.Browser.prototype.Chrome.prototype.set_version = function(version){
-				if(version){
-					this.version = version; //format into long version
-				}else {
-					//determine version dynamically
-					var _ua = window.navigator.userAgent,
-						_ver = _ua.match(/Chrome\/[0-9-.]+/);
-
-					this.version = _ver[0].match(/[0-9-.]+/)[0];
-				}
-			};
+		Detect.Browser.prototype.Chrome.prototype = Detect.Browser.prototype;
 
 		/**
 		 * Browser brand: Mozilla Firefox
@@ -194,19 +178,10 @@ var Detect = function(config){
 			this.engine = "gecko";
 			this.version = "0.0.0";
 			this.short_version = 0;
+			this.regex = /Firefox\/[0-9-.]+/;
 		};
 
-			Detect.Browser.prototype.Firefox.prototype.set_version = function(version){
-				if(version){
-					this.version = version; //format into long version
-				}else {
-					//determine version dynamically
-					var _ua = window.navigator.userAgent,
-						_ver = _ua.match(/Firefox\/[0-9-.]+/);
-
-					this.version = _ver[0].match(/[0-9-.]+/)[0];
-				}
-			};
+		Detect.Browser.prototype.Firefox.prototype = Detect.Browser.prototype;
 
 		/**
 		 * Browser brand: Microsoft Internet Explorer
@@ -218,19 +193,10 @@ var Detect = function(config){
 			this.engine = "trident";
 			this.version = "0.0.0";
 			this.short_version = 0;
+			this.regex = /rv\:[0-9-.]+/;
 		};
 
-			Detect.Browser.prototype.InternetExplorer.prototype.set_version = function(version){
-				if(version){
-					this.version = version; //format into long version
-				}else {
-					//determine version dynamically
-					var _ua = window.navigator.userAgent,
-						_ver = _ua.match(/rv\:[0-9-.]+/);
-
-					this.version = _ver[0].match(/[0-9-.]+/)[0];
-				}
-			};
+		Detect.Browser.prototype.InternetExplorer.prototype = Detect.Browser.prototype;
 
 		/**
 		 * Determine the user's browser
@@ -289,7 +255,10 @@ var Detect = function(config){
 			}
 
 			//populate short version property
-			output.short_version = Detect.Utils.short_version(output.version);			
+			output.short_version = Detect.Utils.short_version(output.version);
+
+			//don't need to expose output.regex to the final object, delete it
+			delete output.regex;
 
 			return output;
 		};
@@ -447,7 +416,6 @@ var Detect = function(config){
 	 */
 	Detect.Plugins = function(){
 		if(window.navigator.plugins && window.navigator.plugins.length > 1){
-
 			for(var i = 0; i < window.navigator.plugins.length; i++){
 				var plugin = window.navigator.plugins[i];
 
@@ -490,12 +458,12 @@ var Detect = function(config){
 	 * A set of utility plugins for working with installed plugins
 	 * 
 	 * @since  1.2.0
-	 * @param {object} context [The Detect object]
 	 * @type {Object}
 	 */
 	Detect.Utils = {
 		/**
 		 * Error strings
+		 * 
 		 * @type {Object}
 		 */
 		_errors: {
