@@ -224,37 +224,33 @@ var Detect = function(config){
 			//safari/webkit
 			if(/Version/.test(_ua) && /Safari/.test(_ua)){
 				output = new this.Safari();
-				output.set_version();
 			}
 
 			//chrome/blink
 			if(/Chrome/.test(_ua) && /AppleWebKit/.test(_ua)){
 				output = new this.Chrome();
-				output.set_version();	
 			}
 
 			//firefox/gecko
 			if(/(Firefox)/.test(_ua)){
 				output = new this.Firefox();
-				output.set_version();
 			}
 
 			if(/iPad/.test(_ua) || /iPhone/.test(_ua)){
 				output = new this.MobileSafari();
-				output.set_version();
 			} 
 
 			//ie
 			if(/Trident/.test(_ua)){
 				output = new this.InternetExplorer();
-				output.set_version();
 			}
 
 			//opera
 			if(/Opera/.test(_ua)){
 				output = new this.Opera();
-				output.set_version();
 			}
+			
+			output.set_version();
 
 			//don't need to expose output.regex to the final object, delete it
 			delete output.regex;
