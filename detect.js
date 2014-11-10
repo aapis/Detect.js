@@ -92,21 +92,45 @@ var Detect = function(config){
 	 * against known values 
 	 */
 	Detect.Browser = function(){
+		this.version = "0.0.0";
+		this.short_version = 0;
+
 		return this.parse_browser_info();
 	};
 
 		Detect.Browser.prototype.set_version = function(version){
 			if(version){
-					this.version = version; //format into long version
-				}else {
-					//determine version dynamically
-					var _ua = window.navigator.userAgent,
-						_ver = _ua.match(this.regex);
+				this.version = version; //format into long version
+			}else {
+				//determine version dynamically
+				var _ua = window.navigator.userAgent,
+					_ver = _ua.match(this.regex);
 
-					if(_ver[0])
-						this.version = _ver[0].match(/[0-9-.]+/)[0];
-				}
+				if(_ver[0])
+					this.version = _ver[0].match(/[0-9-.]+/)[0];
+			}
+
+			//also set the major version number
+			this.set_short_version();
 		};
+
+		/**
+		 * Returns the major revision number from the long version string
+		 * 
+		 * @param  {string} version
+		 * @since  1.3.0
+		 * @return {number}
+		 */
+		Detect.Browser.prototype.set_short_version = function(version){
+			if(version){
+				this.short_version = version;
+			}else {
+				var _short = this.version.split(".")[0];
+
+				if(_short)
+					this.short_version = parseInt(_short);
+			}
+		}
 
 		/**
 		 * Browser brand: Unknown
@@ -116,8 +140,6 @@ var Detect = function(config){
 		Detect.Browser.prototype.Unknown = function(){
 			this.name = "unknown";
 			this.engine = "unknown";
-			this.version = "0.0.0";
-			this.short_version = 0;
 			this.regex = new RegExp();
 		};
 
@@ -131,8 +153,6 @@ var Detect = function(config){
 		Detect.Browser.prototype.Safari = function(){
 			this.name = "safari";
 			this.engine = "webkit";
-			this.version = "0.0.0";
-			this.short_version = 0;
 			this.regex = /Version\/[0-9-.]+/;
 		};
 
@@ -146,8 +166,6 @@ var Detect = function(config){
 		Detect.Browser.prototype.MobileSafari = function(){
 			this.name = "mobile_safari";
 			this.engine = "webkit";
-			this.version = "0.0.0";
-			this.short_version = 0;
 			this.regex = /Version\/[0-9-.]+/;
 		};
 
@@ -161,8 +179,6 @@ var Detect = function(config){
 		Detect.Browser.prototype.Chrome = function(){
 			this.name = "chrome";
 			this.engine = "blink";
-			this.version = "0.0.0";
-			this.short_version = 0;
 			this.regex = /Chrome\/[0-9-.]+/;
 		};
 
@@ -176,7 +192,6 @@ var Detect = function(config){
 		Detect.Browser.prototype.Firefox = function(){
 			this.name = "firefox";
 			this.engine = "gecko";
-			this.version = "0.0.0";
 			this.short_version = 0;
 			this.regex = /Firefox\/[0-9-.]+/;
 		};
@@ -191,8 +206,6 @@ var Detect = function(config){
 		Detect.Browser.prototype.InternetExplorer = function(){
 			this.name = "internet_explorer";
 			this.engine = "trident";
-			this.version = "0.0.0";
-			this.short_version = 0;
 			this.regex = /rv\:[0-9-.]+/;
 		};
 
@@ -256,7 +269,7 @@ var Detect = function(config){
 			}
 
 			//populate short version property
-			output.short_version = Detect.Utils.short_version(output.version);
+			//output.short_version = this.set_short_version();
 
 			//don't need to expose output.regex to the final object, delete it
 			delete output.regex;
@@ -536,18 +549,6 @@ var Detect = function(config){
 			var pattern = new RegExp('[a-zA-Z-_]+', 'gi');
 			
 			return pattern.exec(plugin);
-		};
-
-		/**
-		 * Returns the major revision number from the long version string
-		 * 
-		 * @param  {string} longVersion
-		 * @since  1.2.0
-		 * @return {number}
-		 */
-		Detect.Utils.short_version = function(longVersion){
-			if(_short = longVersion.split(".")[0])
-				return parseInt(_short);
 		};
 
 		/**
