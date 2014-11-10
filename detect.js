@@ -227,8 +227,6 @@ var Detect = function(config){
 			var output = new this.Unknown(),
 				_ua = window.navigator.userAgent;
 
-				console.log(_ua);
-
 			//safari/webkit
 			if(/Version/.test(_ua) && /Safari/.test(_ua)){
 				output = new this.Safari();
@@ -270,14 +268,11 @@ var Detect = function(config){
 	 * Determine the user's operating system and system architecture
 	 */
 	Detect.OS = function(){
-		this.arch = 32;
+		this.architecture = 32;
 		this.version = 0;
 
-		//assign the correct value to this.arch
-		this.determine_cpu_arch();
-
 		//assign the correct value to this.version
-		this.determine_version();
+		//this.determine_version();
 
 		return this.parse_os_info();
 	};
@@ -288,10 +283,11 @@ var Detect = function(config){
 		 * @since  1.3.0
 		 * @type {Object}
 		 */
-		Detect.OS.prototype.Unknown = function(bits){
+		Detect.OS.prototype.Unknown = function(){
 			this.system = "Unknown";
-			this.architecture = bits;
 		};
+
+		Detect.OS.prototype.Unknown.prototype = Detect.OS.prototype;
 
 		/**
 		 * OSX object prototype
@@ -299,10 +295,11 @@ var Detect = function(config){
 		 * @since  1.3.0
 		 * @type {Object}
 		 */
-		Detect.OS.prototype.Mac = function(bits){
+		Detect.OS.prototype.Mac = function(){
 			this.system = "Mac";
-			this.architecture = bits;
 		};
+
+		Detect.OS.prototype.Mac.prototype = Detect.OS.prototype;
 
 		/**
 		 * Windows object prototype
@@ -310,10 +307,11 @@ var Detect = function(config){
 		 * @since  1.3.0
 		 * @type {Object}
 		 */
-		Detect.OS.prototype.Windows = function(bits){
+		Detect.OS.prototype.Windows = function(){
 			this.system = "Windows";
-			this.architecture = bits;
 		};
+
+		Detect.OS.prototype.Windows.prototype = Detect.OS.prototype;
 
 		/**
 		 * Linux object prototype
@@ -321,10 +319,11 @@ var Detect = function(config){
 		 * @since  1.3.0
 		 * @type {Object}
 		 */
-		Detect.OS.prototype.Linux = function(bits){
+		Detect.OS.prototype.Linux = function(){
 			this.system = "Linux";
-			this.architecture = bits;
 		};
+
+		Detect.OS.prototype.Linux.prototype = Detect.OS.prototype;
 
 		/**
 		 * Android OS object prototype
@@ -332,10 +331,11 @@ var Detect = function(config){
 		 * @since  1.3.1
 		 * @type {Object}
 		 */
-		Detect.OS.prototype.Android = function(bits){
+		Detect.OS.prototype.Android = function(){
 			this.system = "Android";
-			this.architecture = bits;
 		};
+
+		Detect.OS.prototype.Android.prototype = Detect.OS.prototype;
 
 		/**
 		 * iOS object prototype
@@ -343,11 +343,11 @@ var Detect = function(config){
 		 * @since  1.3.1
 		 * @type {Object}
 		 */
-		Detect.OS.prototype.iOS = function(bits){
+		Detect.OS.prototype.iOS = function(){
 			this.system = "iOS";
-			this.architecture = bits;
 		};
 
+		Detect.OS.prototype.iOS.prototype = Detect.OS.prototype;
 
 		/**
 		 * Determine the user's operating system
@@ -362,17 +362,28 @@ var Detect = function(config){
 			switch(_platform[0]){
 				case "macintel":
 				case "macppc":
-					output = new this.Mac(this.arch); break;
+					output = new this.Mac(); 
+					output.set_architecture(/(86|64)/.test(_platform[1]) ? 64 : 32);
+					break;
 
 				case "win32":
-					output = new this.Windows(this.arch); break;
+					output = new this.Windows(); 
+					output.set_architecture(window.navigator.userAgent.match(/wow64/i) ? 64 : 32);
+					break;
 
 				case "linux":
-					output = new this.Linux(this.arch); break;
+					output = new this.Linux();
+					output.set_architecture(/(86|64)/.test(_platform[1]) ? 64 : 32);
+					break;
 
 				case "ipad":
 				case "iphone":
-					output = new this.iOS(this.arch); break;
+					output = new this.iOS(); 
+					output.set_architecture(/(86|64)/.test(_platform[1]) ? 64 : 32);
+					break;
+
+				default:
+					output.set_architecture(/(86|64)/.test(_platform[1]) ? 64 : 32);
 			}
 
 			//if there is a second part to the platform string, use it to get
@@ -387,32 +398,14 @@ var Detect = function(config){
 		};
 
 		/**
-		 * Determine the CPU architecture - 32 or 64
-		 * Note: some browsers don't broadcast the system architecture so this 
-		 * will make it's best guess
+		 * Set the value of this.architecture
 		 * 
-		 * @since  1.0.0
-		 * @return {mixed} [bool|string]
+		 * @since  1.3.2
+		 * @return {Number}
 		 */
-		Detect.OS.prototype.determine_cpu_arch = function(){
-			var _platform = window.navigator.platform.toLowerCase().split(' ');
-			
-			this.arch = (/(86|64)/.test(_platform[1]) ? 64 : 32);
-
-			switch(_platform[0]){
-				case 'macintel':
-					this.arch = 64; break;
-
-				case 'macppc':
-					this.arch = 32; break;
-
-				case 'win32': 
-					this.arch = (window.navigator.userAgent.match(/wow64/i) ? 64 : 32); break;
-
-				//not tested yet
-				case 'linux': 
-					this.arch = 64; break;
-			}
+		Detect.OS.prototype.set_architecture = function(arch){
+			if(arch && typeof arch == "number")
+				this.architecture = arch;
 		};
 
 		/**
@@ -422,7 +415,15 @@ var Detect = function(config){
 		 * @return {[type]} [description]
 		 */
 		Detect.OS.prototype.determine_version = function(){
+			var _ua = window.navigator.userAgent;
 
+			if(osx = _ua.match(/Mac\ OS\ X\ [0-9-_]+/)){ //OSX, extract version number
+				return this.format_version(osx[0].match(/[0-9-._]+/));				
+			}
+		};
+
+		Detect.OS.prototype.format_version = function(version){
+			this.version = version;
 		};
 
 	/**
