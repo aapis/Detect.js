@@ -426,21 +426,10 @@ var Detect = function(config){
 			var _os = null;
 
 			if(_os = window.navigator.userAgent.match(this.version_regex)){ //OSX, extract version number
-				this.version = this.format_version(_os[0]);
-			}
-		};
+				var formatted = _os[0].replace(/_/g, ".").match(/[0-9-.]+/)[0];
 
-		/**
-		 * Format the version number so it's standard for all platforms
-		 *
-		 * @since  1.3.3
-		 * @param  {String} version Raw version number to format
-		 * @return {String}
-		 */
-		Detect.OS.prototype.format_version = function(version){
-			//convert underscores to periods then strip out everything but
-			//the numbers and any periods
-			return version.replace(/_/g, ".").match(/[0-9-.]+/)[0];
+				this.version = formatted;
+			}
 		};
 
 	/**
