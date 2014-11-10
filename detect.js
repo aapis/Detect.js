@@ -102,7 +102,7 @@ var Detect = function(config){
 		 * Set browser version properties either manually or dynamically
 		 * 
 		 * @since  1.3.2
-		 * @param {[type]} version [description]
+		 * @param {string} version  The desired version number.  Optional.
 		 */
 		Detect.Browser.prototype.set_version = function(version){
 			if(version){
@@ -363,7 +363,6 @@ var Detect = function(config){
 				case "macintel":
 					output = new this.Mac();
 					output.set_architecture(64);
-					//output.set_version();
 					break;
 
 				case "macppc":
@@ -400,6 +399,8 @@ var Detect = function(config){
 				}
 			}
 
+			output.set_version();
+
 			return output;
 		};
 
@@ -419,13 +420,13 @@ var Detect = function(config){
 		 * EXPERIMENTAL
 		 *
 		 * @since  1.3.3
-		 * @return {String} Formatted OS version string
+		 * @return {void}
 		 */
 		Detect.OS.prototype.set_version = function(){
 			var _ua = window.navigator.userAgent;
 
 			if(osx = _ua.match(/Mac\ OS\ X\ [0-9-_]+/)){ //OSX, extract version number
-				return this.format_version(osx[0].match(/[0-9-._]+/));
+				this.version = this.format_version(osx[0]);
 			}
 		};
 
@@ -434,11 +435,13 @@ var Detect = function(config){
 		 * EXPERIMENTAL
 		 *
 		 * @since  1.3.3
-		 * @param  {Satring} version Raw version number to format
+		 * @param  {String} version Raw version number to format
 		 * @return {String}
 		 */
 		Detect.OS.prototype.format_version = function(version){
-			this.version = version[1];
+			//convert underscores to periods then strip out everything but
+			//the numbers and any periods
+			return version.replace(/_/g, ".").match(/[0-9-.]+/)[0];
 		};
 
 	/**
