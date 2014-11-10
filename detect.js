@@ -24,14 +24,14 @@ var Detect = function(config){
 	 * @since 1.0.0
 	 * @type {Object}
 	 */
-	Detect.prototype._Version = '1.3.0';
+	Detect.prototype._Version = '1.3.3';
 
 	/**
 	 * Creates and populates the properties of the Detect object
 	 *
-	 * @param {object} options
+	 * @param {Object} options
 	 * @since  1.0.0
-	 * @return {object} Aggregated data object
+	 * @return {Object} Aggregated data object
 	 */
 	Detect.prototype.generate_output = function(options){
 		var output = {};
@@ -57,8 +57,8 @@ var Detect = function(config){
 	/**
 	 * Add classes to the body element if options.addBodyClasses is true
 	 *
-	 * @param {object} options
-	 * @param {object} ref [The object we use to determine the proper class names]
+	 * @param {Object} options
+	 * @param {Object} ref [The object we use to determine the proper class names]
 	 * @since  1.3.0
 	 * @return {void}
 	 */
@@ -102,7 +102,7 @@ var Detect = function(config){
 		 * Set browser version properties either manually or dynamically
 		 * 
 		 * @since  1.3.2
-		 * @param {string} version  The desired version number.  Optional.
+		 * @param {String} version  The desired version number.  Optional.
 		 */
 		Detect.Browser.prototype.set_version = function(version){
 			if(version){
@@ -123,9 +123,9 @@ var Detect = function(config){
 		/**
 		 * Returns the major revision number from the long version string
 		 * 
-		 * @param  {string} version
+		 * @param  {String} version
 		 * @since  1.3.2
-		 * @return {number}
+		 * @return {Number}
 		 */
 		Detect.Browser.prototype.set_short_version = function(version){
 			if(version){
@@ -423,10 +423,9 @@ var Detect = function(config){
 		 * @return {void}
 		 */
 		Detect.OS.prototype.set_version = function(){
-			var _ua = window.navigator.userAgent,
-				_os = null;
+			var _os = null;
 
-			if(_os = _ua.match(this.version_regex)){ //OSX, extract version number
+			if(_os = window.navigator.userAgent.match(this.version_regex)){ //OSX, extract version number
 				this.version = this.format_version(_os[0]);
 			}
 		};
@@ -448,7 +447,7 @@ var Detect = function(config){
 	 * Determine what plugins, if any, the browser is running
 	 *
 	 * @since  1.3.0
-	 * @return {object}
+	 * @return {Object}
 	 */
 	Detect.Plugins = function(){
 		if(window.navigator.plugins && window.navigator.plugins.length > 1){
@@ -511,7 +510,7 @@ var Detect = function(config){
 		/**
 		 * Determine if a plugin is installed
 		 *
-		 * @param  {string}  plugin_slug [The slug to compare each installed plugin against]
+		 * @param  {String}  plugin_slug [The slug to compare each installed plugin against]
 		 * @since  1.3.0
 		 * @return {Boolean}
 		 */
@@ -532,7 +531,7 @@ var Detect = function(config){
 		/**
 		 * Determine the version of a specified plugin
 		 *
-		 * @param  {string} plugin_slug [The slug to compare each installed plugin against]
+		 * @param  {String} plugin_slug [The slug to compare each installed plugin against]
 		 * @since  1.3.0
 		 * @return {mixed}
 		 */
@@ -552,7 +551,7 @@ var Detect = function(config){
 		/**
 		 * Generate a slug that is easier to remember than the real plugin name
 		 *
-		 * @param  {string} plugin [Plugin name to process]
+		 * @param  {String} plugin [Plugin name to process]
 		 * @since  1.0.0
 		 * @return {string}
 		 */
@@ -563,7 +562,7 @@ var Detect = function(config){
 		/**
 		 * Sanitize plugin names to remove things like symbols and vesion numbers
 		 * 
-		 * @param  {string} plugin [Plugin name to process]
+		 * @param  {String} plugin [Plugin name to process]
 		 * @since  1.0.0
 		 * @return {string}
 		 */
@@ -588,9 +587,9 @@ var Detect = function(config){
 		 * Determine if a key is present within an array
 		 *
 		 * @since  1.3.0
-		 * @param  {string} needle   Value to search for
+		 * @param  {String} needle   Value to search for
 		 * @param  {mixed} haystack  Object or array to search
-		 * @return {boolean}
+		 * @return {Boolean}
 		 */
 		Detect.Utils.in_array = function(needle, haystack){
 			if(typeof haystack === "object"){
@@ -604,9 +603,9 @@ var Detect = function(config){
 		 * Use built-in error types to generate custom error strings
 		 *
 		 * @since  1.3.0
-		 * @param  {string} type  Error type, must match something in this._errors
-		 * @param  {string} repl  String replacement
-		 * @return {string}
+		 * @param  {String} type  Error type, must match something in this._errors
+		 * @param  {String} repl  String replacement
+		 * @return {String}
 		 */
 		Detect.Utils.format_error = function(type, repl){
 			return this.sprintf(this._errors[type], repl);
