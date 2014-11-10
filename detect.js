@@ -295,7 +295,7 @@ var Detect = function(config){
 		 */
 		Detect.OS.prototype.Mac = function(){
 			this.system = "Mac";
-			this.version_regex = /Mac\ OS\ X\ [0-9-_]+/; 
+			this.version_regex = /Mac\ OS\ X\ [0-9-._]+/;
 		};
 
 		Detect.OS.prototype.Mac.prototype = Detect.OS.prototype;
