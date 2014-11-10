@@ -353,7 +353,7 @@ var Detect = function(config){
 		 * Determine the user's operating system
 		 *
 		 * @since  1.3.0
-		 * @return {string}
+		 * @return {String}
 		 */
 		Detect.OS.prototype.parse_os_info = function(){
 			var output = new this.Unknown(),
@@ -361,9 +361,14 @@ var Detect = function(config){
 
 			switch(_platform[0]){
 				case "macintel":
+					output = new this.Mac();
+					output.set_architecture(64);
+					//output.set_version();
+					break;
+
 				case "macppc":
 					output = new this.Mac(); 
-					output.set_architecture(/(86|64)/.test(_platform[1]) ? 64 : 32);
+					output.set_architecture(32);
 					break;
 
 				case "win32":
@@ -379,7 +384,7 @@ var Detect = function(config){
 				case "ipad":
 				case "iphone":
 					output = new this.iOS(); 
-					output.set_architecture(/(86|64)/.test(_platform[1]) ? 64 : 32);
+					output.set_architecture(/(86|64)/.test(_platform[1]) ? 64 : 32); //TODO: test/fix this
 					break;
 
 				default:
@@ -390,7 +395,8 @@ var Detect = function(config){
 			//more specific
 			if(_platform[1]){
 				if(_platform[1].match(/^arm/)){
-					output = new this.Android(this.arch);
+					output = new this.Android();
+					output.set_architecture(/(86|64)/.test(_platform[1]) ? 64 : 32); // TODO: test/fix this
 				}
 			}
 
@@ -400,7 +406,7 @@ var Detect = function(config){
 		/**
 		 * Set the value of this.architecture
 		 * 
-		 * @since  1.3.2
+		 * @since  1.3.3
 		 * @return {Number}
 		 */
 		Detect.OS.prototype.set_architecture = function(arch){
@@ -410,20 +416,29 @@ var Detect = function(config){
 
 		/**
 		 * Determine the specific OS version
+		 * EXPERIMENTAL
 		 *
 		 * @since  1.3.3
-		 * @return {[type]} [description]
+		 * @return {String} Formatted OS version string
 		 */
-		Detect.OS.prototype.determine_version = function(){
+		Detect.OS.prototype.set_version = function(){
 			var _ua = window.navigator.userAgent;
 
 			if(osx = _ua.match(/Mac\ OS\ X\ [0-9-_]+/)){ //OSX, extract version number
-				return this.format_version(osx[0].match(/[0-9-._]+/));				
+				return this.format_version(osx[0].match(/[0-9-._]+/));
 			}
 		};
 
+		/**
+		 * Format the version number so it's standard for all platforms
+		 * EXPERIMENTAL
+		 *
+		 * @since  1.3.3
+		 * @param  {Satring} version Raw version number to format
+		 * @return {String}
+		 */
 		Detect.OS.prototype.format_version = function(version){
-			this.version = version;
+			this.version = version[1];
 		};
 
 	/**
