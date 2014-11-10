@@ -34,24 +34,24 @@ var Detect = function(config){
 	 * @return {object} Aggregated data object
 	 */
 	Detect.prototype.generate_output = function(options){
-		this.output = {};
+		var output = {};
 		
 		if(false === options.ignore.plugins)
-			this.output.plugins = new Detect.Plugins();
+			output.plugins = new Detect.Plugins();
 
 		if(false === options.ignore.os)
-			this.output.os = new Detect.OS();
+			output.os = new Detect.OS();
 
 		if(false === options.ignore.browser)
-			this.output.browser = new Detect.Browser();
+			output.browser = new Detect.Browser();
 
 		if(false === options.ignore.supports)
-			this.output.supports = new Detect.Supports();
+			output.supports = new Detect.Supports();
 
 		if(options.add_classes)
 			this.add_classes();
 		
-		return this.output;
+		return output;
 	};
 
 	/**
@@ -98,9 +98,15 @@ var Detect = function(config){
 		return this.parse_browser_info();
 	};
 
+		/**
+		 * Set browser version properties either manually or dynamically
+		 * 
+		 * @since  1.3.2
+		 * @param {[type]} version [description]
+		 */
 		Detect.Browser.prototype.set_version = function(version){
 			if(version){
-				this.version = version; //format into long version
+				this.version = version;
 			}else {
 				//determine version dynamically
 				var _ua = window.navigator.userAgent,
@@ -118,7 +124,7 @@ var Detect = function(config){
 		 * Returns the major revision number from the long version string
 		 * 
 		 * @param  {string} version
-		 * @since  1.3.0
+		 * @since  1.3.2
 		 * @return {number}
 		 */
 		Detect.Browser.prototype.set_short_version = function(version){
@@ -215,11 +221,13 @@ var Detect = function(config){
 		 * Determine the user's browser
 		 *
 		 * @since  1.3.0
-		 * @return {object}
+		 * @return {Detect.Browser}
 		 */
 		Detect.Browser.prototype.parse_browser_info = function(){
 			var output = new this.Unknown(),
 				_ua = window.navigator.userAgent;
+
+				console.log(_ua);
 
 			//safari/webkit
 			if(/Version/.test(_ua) && /Safari/.test(_ua)){
@@ -249,7 +257,7 @@ var Detect = function(config){
 			if(/Opera/.test(_ua)){
 				output = new this.Opera();
 			}
-			
+
 			output.set_version();
 
 			//don't need to expose output.regex to the final object, delete it
@@ -263,9 +271,13 @@ var Detect = function(config){
 	 */
 	Detect.OS = function(){
 		this.arch = 32;
+		this.version = 0;
 
 		//assign the correct value to this.arch
 		this.determine_cpu_arch();
+
+		//assign the correct value to this.version
+		this.determine_version();
 
 		return this.parse_os_info();
 	};
@@ -401,6 +413,16 @@ var Detect = function(config){
 				case 'linux': 
 					this.arch = 64; break;
 			}
+		};
+
+		/**
+		 * Determine the specific OS version
+		 *
+		 * @since  1.3.3
+		 * @return {[type]} [description]
+		 */
+		Detect.OS.prototype.determine_version = function(){
+
 		};
 
 	/**
