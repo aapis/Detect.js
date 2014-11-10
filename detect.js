@@ -270,9 +270,7 @@ var Detect = function(config){
 	Detect.OS = function(){
 		this.architecture = 32;
 		this.version = 0;
-
-		//assign the correct value to this.version
-		//this.determine_version();
+		this.version_regex = new RegExp();
 
 		return this.parse_os_info();
 	};
@@ -297,6 +295,7 @@ var Detect = function(config){
 		 */
 		Detect.OS.prototype.Mac = function(){
 			this.system = "Mac";
+			this.version_regex = /Mac\ OS\ X\ [0-9-_]+/; 
 		};
 
 		Detect.OS.prototype.Mac.prototype = Detect.OS.prototype;
@@ -353,7 +352,7 @@ var Detect = function(config){
 		 * Determine the user's operating system
 		 *
 		 * @since  1.3.0
-		 * @return {String}
+		 * @return {Detect.OS}
 		 */
 		Detect.OS.prototype.parse_os_info = function(){
 			var output = new this.Unknown(),
@@ -363,6 +362,7 @@ var Detect = function(config){
 				case "macintel":
 					output = new this.Mac();
 					output.set_architecture(64);
+					output.set_version();
 					break;
 
 				case "macppc":
@@ -399,7 +399,8 @@ var Detect = function(config){
 				}
 			}
 
-			output.set_version();
+			//don't need to expose this to the world, delete it from the object
+			delete output.version_regex;
 
 			return output;
 		};
@@ -408,7 +409,7 @@ var Detect = function(config){
 		 * Set the value of this.architecture
 		 * 
 		 * @since  1.3.3
-		 * @return {Number}
+		 * @return {void}
 		 */
 		Detect.OS.prototype.set_architecture = function(arch){
 			if(arch && typeof arch == "number")
@@ -416,23 +417,22 @@ var Detect = function(config){
 		};
 
 		/**
-		 * Determine the specific OS version
-		 * EXPERIMENTAL
+		 * Determine the specific OS version, sets the value of this.version
 		 *
 		 * @since  1.3.3
 		 * @return {void}
 		 */
 		Detect.OS.prototype.set_version = function(){
-			var _ua = window.navigator.userAgent;
+			var _ua = window.navigator.userAgent,
+				_os = null;
 
-			if(osx = _ua.match(/Mac\ OS\ X\ [0-9-_]+/)){ //OSX, extract version number
-				this.version = this.format_version(osx[0]);
+			if(_os = _ua.match(this.version_regex)){ //OSX, extract version number
+				this.version = this.format_version(_os[0]);
 			}
 		};
 
 		/**
 		 * Format the version number so it's standard for all platforms
-		 * EXPERIMENTAL
 		 *
 		 * @since  1.3.3
 		 * @param  {String} version Raw version number to format
