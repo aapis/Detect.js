@@ -223,53 +223,38 @@ var Detect = function(config){
 
 			//safari/webkit
 			if(/Version/.test(_ua) && /Safari/.test(_ua)){
-				var Safari = new this.Safari();
-					Safari.set_version();
-
-				output = Safari;
+				output = new this.Safari();
+				output.set_version();
 			}
 
 			//chrome/blink
 			if(/Chrome/.test(_ua) && /AppleWebKit/.test(_ua)){
-				var Chrome = new this.Chrome();
-					Chrome.set_version();
-
-				output = Chrome;
+				output = new this.Chrome();
+				output.set_version();	
 			}
 
 			//firefox/gecko
 			if(/(Firefox)/.test(_ua)){
-				var Firefox = new this.Firefox();
-					Firefox.set_version();
-				
-				output = Firefox;
+				output = new this.Firefox();
+				output.set_version();
 			}
 
-			if(/iPad/.test(_ua)){
-				var MobileSafari = new this.MobileSafari();
-					MobileSafari.set_version();
-
-				output = MobileSafari;
+			if(/iPad/.test(_ua) || /iPhone/.test(_ua)){
+				output = new this.MobileSafari();
+				output.set_version();
 			} 
 
 			//ie
 			if(/Trident/.test(_ua)){
-				var InternetExplorer = new this.InternetExplorer();
-					InternetExplorer.set_version();
-
-				output = InternetExplorer;
+				output = new this.InternetExplorer();
+				output.set_version();
 			}
 
 			//opera
 			if(/Opera/.test(_ua)){
-				var Opera = new this.Opera();
-					Opera.set_version();
-
-				output = Opera; //preliminary support
+				output = new this.Opera();
+				output.set_version();
 			}
-
-			//populate short version property
-			//output.short_version = this.set_short_version();
 
 			//don't need to expose output.regex to the final object, delete it
 			delete output.regex;
