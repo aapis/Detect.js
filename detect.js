@@ -242,7 +242,7 @@ var Detect = function(config){
 				output = new this.Firefox();
 			}
 
-			if(/iPad/.test(_ua) || /iPhone/.test(_ua)){
+			if(/iPad|iPhone/.test(_ua)){
 				output = new this.MobileSafari();
 			} 
 
